@@ -1,0 +1,6 @@
+kubectl run -it loader --image=busybox /bin/sh
+
+while true; do wget -q -O- http://acg-lb.acg-ns.svc.cluster.local; done
+
+
+kubectl run -i --tty load-generator --rm --image=busybox --restart=Never -- /bin/sh -c "while true; do wget -q -O- http://acg-lb.acg-ns.svc.cluster.local; done"
