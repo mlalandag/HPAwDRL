@@ -1,4 +1,5 @@
-class MonteCarloAgent():
+
+class REINFORCEAgent():
     
     def __init__(self):
         pass
@@ -6,3 +7,4 @@ class MonteCarloAgent():
     def act(self, observation, reward, done):
 
         pass
+           

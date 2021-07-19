@@ -1,16 +1,14 @@
 from dependency_injector  import providers, containers
-from agents.random_agents import RandomAgent
-from environments         import environment, task_queue, worker_pool
+from agents.DQNAgent      import DQAgent
+from environments         import environment
 
 class Configs(containers.DeclarativeContainer):
     config = providers.Configuration('config')
 
 class Agents(containers.DeclarativeContainer):
-    agent = providers.Singleton(RandomAgent)
+    agent = providers.Singleton(DQAgent)
     # other clients 
 
 class Environments(containers.DeclarativeContainer):
-    worker_p = providers.Singleton(...)
-    task_q   = providers.Singleton(...)
-    env = providers.Singleton(Environment, worker_pool= worker_p, task_queue= task_q)
+    env = providers.Singleton(environment)
     # other clients     
