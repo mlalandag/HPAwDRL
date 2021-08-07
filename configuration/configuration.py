@@ -1,4 +1,5 @@
 NUM_EPISODES                = 100
+NUM_TIMESTEPS               = 1000
 
 NUM_OF_ACTIONS              = 3
 

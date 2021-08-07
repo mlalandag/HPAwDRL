@@ -1,5 +1,5 @@
-from environments.pods_cpu_mem  import K8Sstate
-from config import *
+from environments.pods_cpu_mem import K8Sstate
+from configuration import configuration
 import numpy as np
 import datetime
 
@@ -7,9 +7,8 @@ class K8Senvironment():
     
     def __init__(self):
         self.observation_space_n = 99999999
-        self.action_space_n = NUM_OF_ACTIONS
+        self.action_space_n = configuration.NUM_OF_ACTIONS
         self.action_space   = [0,1,2]
-        self.state          = K8Sstate.get_state()    
     
     
     def step(self, action):
@@ -24,10 +23,11 @@ class K8Senvironment():
             self.remove_pod()
             reward += self.calculate_reward()      
 
-        # creating the state vector
-        self.state = K8Sstate.get_state()
+        # retrieving the state vector
+        k8sState = K8Sstate()        
+        self.state = k8sState.get_state()
 
-        return self.state, reward, done, self.info
+        return self.state, reward
 
     
     def calculate_reward(self):
@@ -42,4 +42,8 @@ class K8Senvironment():
     
     def remove_pod(self):
         # add pod with scale-cluster.py
-        pass            
+        pass 
+
+    def get_state(self):
+        k8sState = K8Sstate()        
+        self.state = k8sState.get_state()
