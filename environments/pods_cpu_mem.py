@@ -22,7 +22,7 @@ class K8Sstate():
         for pod in resource["items"]:
             if pod['metadata']['name'].startswith('php-apache'):
                 count += 1
-                cpu.append(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['cpu'])))
+                cpu.append(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['cpu'])) / 6000)
                 mem.append(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['memory'])))
 
         cpu += [0] * (MAX_PODS - len(cpu))

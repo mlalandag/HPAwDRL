@@ -23,7 +23,7 @@ class DQNAgent():
         self.gamma = 0.9  
         
         #define the epsilon value
-        self.epsilon = 0.8   
+        self.epsilon = 0.0   
         
         #define the update rate at which we want to update the target network
         self.update_rate = 1000    
@@ -35,7 +35,7 @@ class DQNAgent():
         self.target_network = self.build_network()
         
         #copy the weights of the main network to the target network
-        self.target_network.set_weights(self.main_network.get_weights())  
+        # self.target_network.set_weights(self.main_network.get_weights())  
         
     def act(self, state):
 
@@ -50,9 +50,9 @@ class DQNAgent():
     def build_network(self):
 
         model = Sequential()
-        model.add(Dense(8, activation='relu'))
-        model.add(Dense(16, activation='relu'))        
-        model.add(Dense(8, activation='relu'))
+        model.add(Dense(21, activation='relu'))
+        model.add(Dense(32, activation='relu'))        
+        model.add(Dense(16, activation='relu'))
         model.add(Dense(self.action_size, activation='relu'))
         model.compile(loss='mse', optimizer=Adam())
 

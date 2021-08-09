@@ -3,8 +3,7 @@ NUM_TIMESTEPS               = 1000
 
 NUM_OF_ACTIONS              = 3
 
-ACTION_0_TASK_UP_REWARD     =  .3
-ACTION_0_TASK_DOWN_REWARD   = -.3
+MAX_NUM_PODS                = 10
+MIN_NUM_PODS                = 1
 
-ACTION_1_REWARD             = -.1
-ACTION_2_REWARD             =  .1
+BATCH_SIZE                  = 1
