@@ -41,16 +41,16 @@ class K8Senvironment():
         # calculate reward after action
         reward = 0
         self.state = self.get_state()    
-        number_of_pods = self.state[0]
+        number_of_pods = int(self.state[0][0])
         if action == 1:
             for i in range(number_of_pods):
-                if self.state[i] > 50:
+                if self.state[0][i] > 50:
                     reward += 1
                 else:
                     reward -= 1
         elif action == 2:
             for i in range(number_of_pods):
-                if self.state[i] < 50:
+                if self.state[0][i] < 50:
                     reward += 1
                 else:
                     reward -= 1 
@@ -59,9 +59,9 @@ class K8Senvironment():
                 reward += 1
             else:
                 reward -= 1
-                
+
             for i in range(number_of_pods):
-                if self.state[i] < 50:
+                if self.state[0][i] < 50:
                     reward += 1
                 else:
                     reward -= 1   
@@ -73,14 +73,14 @@ class K8Senvironment():
         # add pod with scale-cluster.py
         # retrieving the state vector
         self.state = self.get_state()    
-        number_of_pods = self.state[0] 
+        number_of_pods = int(self.state[0][0])
         if number_of_pods < configuration.MAX_NUM_PODS:
             number_of_pods += 1
         self.set_replicas(number_of_pods)
     
     def remove_pod(self):
         self.state = self.get_state()    
-        number_of_pods = self.state[0] 
+        number_of_pods = int(self.state[0][0])
         if number_of_pods > configuration.MIN_NUM_PODS:
             number_of_pods -= 1
         self.set_replicas(number_of_pods)
@@ -102,7 +102,8 @@ class K8Senvironment():
         cpu += [0] * (configuration.MAX_NUM_PODS - len(cpu))
         mem += [0] * (configuration.MAX_NUM_PODS - len(mem))
 
-        state = [count] + cpu + mem
+        state = np.reshape(np.asarray([count] + cpu + mem), (1, 21))
+        # print(state.shape)
         print(state)
         return state
 

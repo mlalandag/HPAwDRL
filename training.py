@@ -46,4 +46,6 @@ if __name__ == "__main__":
             if len(agent.replay_buffer) > batch_size:
                 agent.train(batch_size)        
 
-            time.sleep(3)                
+            time.sleep(1)    
+
+    agent.save_weights()            
