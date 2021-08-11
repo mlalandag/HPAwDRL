@@ -22,7 +22,7 @@ class DQNAgent():
         self.gamma = 0.9  
         
         #define the epsilon value
-        self.epsilon = 0.0   
+        self.epsilon = 0.05   
         
         #define the update rate at which we want to update the target network
         self.update_rate = 10  

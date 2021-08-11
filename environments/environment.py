@@ -1,4 +1,3 @@
-from environments.pods_cpu_mem import K8Sstate
 from configuration import configuration
 import numpy as np
 import datetime
@@ -47,18 +46,18 @@ class K8Senvironment():
                 if self.state[0][i] > 50:
                     reward += 1
                 else:
-                    reward -= 1
+                    reward -= 5
         elif action == 2:
             for i in range(number_of_pods):
                 if self.state[0][i] < 50:
                     reward += 1
                 else:
-                    reward -= 1 
+                    reward -= 5 
         else:
-            if number_of_pods < 5:
-                reward += 1
-            else:
-                reward -= 1
+            # if number_of_pods < 5:
+            #     reward += 1
+            # else:
+            #     reward -= 1
 
             for i in range(number_of_pods):
                 if self.state[0][i] < 50:
@@ -96,8 +95,9 @@ class K8Senvironment():
         for pod in resource["items"]:
             if pod['metadata']['name'].startswith('php-apache'):
                 count += 1
-                cpu.append(round(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['cpu'])) / 6000, 2))
-                mem.append(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['memory'])))
+                if count <= 10:
+                    cpu.append(round(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['cpu'])) / 3000000, 2))
+                    mem.append(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['memory'])))
 
         cpu += [0] * (configuration.MAX_NUM_PODS - len(cpu))
         mem += [0] * (configuration.MAX_NUM_PODS - len(mem))
