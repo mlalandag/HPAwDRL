@@ -5,6 +5,7 @@ from collections import deque
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.initializers import Zeros
 from configuration import configuration
 
 class DQNAgent():
@@ -22,10 +23,12 @@ class DQNAgent():
         self.gamma = 0.9  
         
         #define the epsilon value
-        self.epsilon = 0.05   
+        self.min_epsilon = 0.1   
+        self.epsilon = 0.9
+        self.epsilon_decay = 0.99
         
         #define the update rate at which we want to update the target network
-        self.update_rate = 10  
+        self.update_rate = 5  
         
         #define the main network
         self.main_network = self.build_network()
@@ -40,6 +43,9 @@ class DQNAgent():
         
     def act(self, state):
 
+        self.epsilon = max(self.min_epsilon, self.epsilon * self.epsilon_decay)
+        print("Epsilon = {}".format(self.epsilon))
+
         if random.uniform(0,1) < self.epsilon:
             return np.random.randint(self.action_size)
         
@@ -53,11 +59,14 @@ class DQNAgent():
     def build_network(self):
 
         model = Sequential()
-        model.add(Dense(21, activation='relu', input_shape=(21,)))
-        model.add(Dense(32, activation='relu'))        
-        model.add(Dense(16, activation='relu'))
-        model.add(Dense(self.action_size, activation='softmax'))
-        model.compile(loss='categorical_crossentropy', optimizer=Adam(), metrics=['accuracy'])
+        initializer = Zeros()
+        model.add(Dense(21, activation='relu', input_shape=(21,), kernel_initializer=initializer))
+        model.add(Dense(32, activation='relu', kernel_initializer=initializer))        
+        model.add(Dense(16, activation='relu', kernel_initializer=initializer))
+        # model.add(Dense(self.action_size, activation='softmax'))
+        # model.compile(loss='categorical_crossentropy', optimizer=Adam(), metrics=['accuracy'])
+        model.add(Dense(self.action_size, kernel_initializer=initializer))        
+        model.compile(loss='mse', optimizer=Adam(), metrics=['accuracy'])        
 
         return model
 
@@ -72,6 +81,8 @@ class DQNAgent():
     #train the network
     def train(self, batch_size):
         
+        print("Training...")
+
         #sample a mini batch of transition from the replay buffer
         minibatch = random.sample(self.replay_buffer, batch_size)
         
@@ -81,7 +92,7 @@ class DQNAgent():
                 
             #compute the Q value using the main network 
             Q_values = self.main_network.predict(state)
-            print("Q_values train = {}".format(Q_values))
+            # print("Q_values train = {}".format(Q_values))
             
             Q_values[0][action] = target_Q
             

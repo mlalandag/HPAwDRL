@@ -1,6 +1,7 @@
 from configuration import configuration
 import numpy as np
 import datetime
+import time
 import sys
 import os
 import re
@@ -24,13 +25,16 @@ class K8Senvironment():
     
         if action == 1:         # if action is 1, add Pod
             self.add_pod()
+            time.sleep(5)             
             self.reward += self.calculate_reward(action)
 
         if action == 2:         # if action is 2, remove Pod 
             self.remove_pod()
+            time.sleep(5)            
             self.reward += self.calculate_reward(action)      
 
-        # retrieving the state vector       
+        # retrieving the state vector
+        time.sleep(2)                   
         self.state = self.get_state()
 
         return self.state, self.reward
@@ -38,34 +42,29 @@ class K8Senvironment():
     
     def calculate_reward(self, action):
         # calculate reward after action
-        reward = 0
+        total_reward = 0
         self.state = self.get_state()    
         number_of_pods = int(self.state[0][0])
         if action == 1:
             for i in range(number_of_pods):
-                if self.state[0][i] > 50:
-                    reward += 1
-                else:
-                    reward -= 5
+                reward = int((configuration.MAX_NUM_PODS - number_of_pods) * self.state[0][i+1])
+                print("action = {}, pod = {}, cpu={}, reward= {}".format(action, i+1, self.state[0][i+1], reward))
+                total_reward += reward
         elif action == 2:
             for i in range(number_of_pods):
-                if self.state[0][i] < 50:
-                    reward += 1
-                else:
-                    reward -= 5 
+                if self.state[0][i+1] != 0:
+                    reward = int((configuration.MAX_NUM_PODS - number_of_pods) * ( 1 / self.state[0][i+1]) * 100)
+                    print("action = {}, pod = {}, cpu={}, reward= {}".format(action, i+1, self.state[0][i+1], reward))
+                    total_reward += reward                    
         else:
-            # if number_of_pods < 5:
-            #     reward += 1
-            # else:
-            #     reward -= 1
-
             for i in range(number_of_pods):
-                if self.state[0][i] < 50:
-                    reward += 1
-                else:
-                    reward -= 1   
+                if self.state[0][i+1] >= 0.1:
+                    reward = int((configuration.MAX_NUM_PODS - number_of_pods) * ( 1 / self.state[0][i+1]) * 100)
+                    print("action = {}, pod = {}, cpu={}, reward= {}".format(action, i+1, self.state[0][i+1], reward))   
+                    total_reward += reward                                         
 
-        return reward                     
+        print("Action = {}, Total reward= {}".format(action, total_reward))
+        return total_reward                     
 
     
     def add_pod(self):
@@ -75,6 +74,7 @@ class K8Senvironment():
         number_of_pods = int(self.state[0][0])
         if number_of_pods < configuration.MAX_NUM_PODS:
             number_of_pods += 1
+            print("Adding pod number {}".format(number_of_pods))
         self.set_replicas(number_of_pods)
     
     def remove_pod(self):
@@ -82,6 +82,7 @@ class K8Senvironment():
         number_of_pods = int(self.state[0][0])
         if number_of_pods > configuration.MIN_NUM_PODS:
             number_of_pods -= 1
+            print("Removing pod number {}".format(number_of_pods + 1))            
         self.set_replicas(number_of_pods)
 
     def get_state(self):
@@ -95,21 +96,21 @@ class K8Senvironment():
         for pod in resource["items"]:
             if pod['metadata']['name'].startswith('php-apache'):
                 count += 1
-                if count <= 10:
-                    cpu.append(round(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['cpu'])) / 3000000, 2))
+                if count <= 10 and pod['containers']:
+                    # print("Pods >> {}".format(pod['containers']))
+                    cpu.append(round(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['cpu'])) / (configuration.CPUS * 1000000), 2))
                     mem.append(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['memory'])))
 
         cpu += [0] * (configuration.MAX_NUM_PODS - len(cpu))
         mem += [0] * (configuration.MAX_NUM_PODS - len(mem))
 
         state = np.reshape(np.asarray([count] + cpu + mem), (1, 21))
-        # print(state.shape)
-        print(state)
+        #print(state)
         return state
 
     def set_replicas(self, num_replicas):
-        print('Number of Replicas: {}'.format(str(num_replicas)))
+        print('Setting number of Replicas to: {}'.format(str(num_replicas)))
         # os.system('kubectl scale deployment php-apache --replicas=3')
         command = "kubectl scale deployment php-apache --replicas=" + str(num_replicas) + " -n php-apache"
-        print(command)
+        # print(command)
         os.system(command)

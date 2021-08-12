@@ -19,6 +19,7 @@ if __name__ == "__main__":
         # Inicializamos reward
         reward  = 0
         time_step = 0
+        agent.epsilon = 0.9
 
         for t in range(configuration.NUM_TIMESTEPS):
 
@@ -41,11 +42,10 @@ if __name__ == "__main__":
             # agent.update_network parameters
             total_reward += reward
 
-            print("state = {}, reward= {}, total_reward={:.2f}".format(state, reward, total_reward))      
+            print("episode = {}, step = {}, state = {}, reward= {}, total_reward={:.2f}".format(i+1, t+1, state, reward, total_reward))      
 
             if len(agent.replay_buffer) > batch_size:
-                agent.train(batch_size)        
+                agent.train(batch_size)           
 
-            time.sleep(1)    
-
-    agent.save_weights()            
+        print("Saving weights ... ")
+        agent.save_weights()            
