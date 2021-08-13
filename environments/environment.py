@@ -21,17 +21,17 @@ class K8Senvironment():
     def step(self, action):
 
         if action == 0:         # if action is 2, do nothing
-            self.reward += self.calculate_reward(action)     
+            self.reward = self.calculate_reward(action)     
     
         if action == 1:         # if action is 1, add Pod
             self.add_pod()
             time.sleep(5)             
-            self.reward += self.calculate_reward(action)
+            self.reward = self.calculate_reward(action)
 
         if action == 2:         # if action is 2, remove Pod 
             self.remove_pod()
             time.sleep(5)            
-            self.reward += self.calculate_reward(action)      
+            self.reward = self.calculate_reward(action)      
 
         # retrieving the state vector
         time.sleep(2)                   
@@ -42,9 +42,12 @@ class K8Senvironment():
     
     def calculate_reward(self, action):
         # calculate reward after action
+        reward = 0
         total_reward = 0
         self.state = self.get_state()    
         number_of_pods = int(self.state[0][0])
+        if number_of_pods > 10:
+            number_of_pods = 10
         if action == 1:
             for i in range(number_of_pods):
                 if self.state[0][i+1] > 150:
