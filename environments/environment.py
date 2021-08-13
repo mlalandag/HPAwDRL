@@ -47,21 +47,30 @@ class K8Senvironment():
         number_of_pods = int(self.state[0][0])
         if action == 1:
             for i in range(number_of_pods):
-                reward = int((configuration.MAX_NUM_PODS - number_of_pods) * self.state[0][i+1])
+                if self.state[0][i+1] > 150:
+                    reward = min(int((configuration.MAX_NUM_PODS - number_of_pods) * self.state[0][i+1]), 100)
+                else:
+                    reward = - min(int(number_of_pods * self.state[0][i+1]), 100)    
                 print("action = {}, pod = {}, cpu={}, reward= {}".format(action, i+1, self.state[0][i+1], reward))
                 total_reward += reward
         elif action == 2:
             for i in range(number_of_pods):
                 if self.state[0][i+1] != 0:
-                    reward = int((configuration.MAX_NUM_PODS - number_of_pods) * ( 1 / self.state[0][i+1]) * 100)
+                    if self.state[0][i+1] < 200:
+                        reward = min(int((configuration.MAX_NUM_PODS - number_of_pods) * (( 1 / self.state[0][i+1]) * 100)), 100)
+                    else:
+                        reward = - min(int(number_of_pods * (( 1 / self.state[0][i+1]) * 100)), 100)
                     print("action = {}, pod = {}, cpu={}, reward= {}".format(action, i+1, self.state[0][i+1], reward))
                     total_reward += reward                    
         else:
             for i in range(number_of_pods):
-                if self.state[0][i+1] >= 0.1:
-                    reward = int((configuration.MAX_NUM_PODS - number_of_pods) * ( 1 / self.state[0][i+1]) * 100)
-                    print("action = {}, pod = {}, cpu={}, reward= {}".format(action, i+1, self.state[0][i+1], reward))   
-                    total_reward += reward                                         
+                if self.state[0][i+1] != 0:               
+                    if (self.state[0][i+1] < 100 and number_of_pods > 5) or (self.state[0][i+1] > 150 and number_of_pods < 5):
+                        reward = - min(int((configuration.MAX_NUM_PODS - number_of_pods) * ( 1 / self.state[0][i+1]) * 100), 100)
+                    else:                        
+                        reward = min(int((configuration.MAX_NUM_PODS - number_of_pods) * ( 1 / self.state[0][i+1]) * 100), 100)                        
+                print("action = {}, pod = {}, cpu={}, reward= {}".format(action, i+1, self.state[0][i+1], reward))   
+                total_reward += reward                                         
 
         print("Action = {}, Total reward= {}".format(action, total_reward))
         return total_reward                     

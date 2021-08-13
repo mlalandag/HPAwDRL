@@ -81,7 +81,7 @@ class DQNAgent():
     #train the network
     def train(self, batch_size):
         
-        print("Training...")
+        print("Training")
 
         #sample a mini batch of transition from the replay buffer
         minibatch = random.sample(self.replay_buffer, batch_size)
@@ -101,6 +101,7 @@ class DQNAgent():
             
     #update the target network weights by copying from the main network
     def update_target_network(self):
+        print("Updating target weights")
         self.target_network.set_weights(self.main_network.get_weights())        
 
     def save_weights(self):
