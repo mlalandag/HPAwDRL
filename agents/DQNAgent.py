@@ -10,11 +10,11 @@ from configuration import configuration
 
 class DQNAgent():
     
-    def __init__(self, action_space):
+    def __init__(self):
         # Hyperparameters
         self.alpha = 0.1
         self.gamma = 0.9
-        self.action_size = configuration.NUM_OF_ACTIONS
+        self.action_size = configuration.MAX_NUM_PODS
         
         #define the replay buffer
         self.replay_buffer = deque(maxlen=5000)
@@ -28,7 +28,7 @@ class DQNAgent():
         self.epsilon_decay = 0.99
         
         #define the update rate at which we want to update the target network
-        self.update_rate = 5  
+        self.update_rate = configuration.UPDATE_RATE  
         
         #define the main network
         self.main_network = self.build_network()
@@ -47,20 +47,20 @@ class DQNAgent():
         print("Epsilon = {}".format(self.epsilon))
 
         if random.uniform(0,1) < self.epsilon:
-            return np.random.randint(self.action_size)
+            return np.random.randint(self.action_size) + 1
         
         # print(state.shape)
         Q_values = self.main_network.predict(state)
-        print("Q_values act = {}".format(Q_values))
+        print("Action = {}, Q_values = {}".format(np.argmax(Q_values[0]) + 1, Q_values))
         
-        return np.argmax(Q_values[0])        
+        return np.argmax(Q_values[0]) + 1      
 
 
     def build_network(self):
 
         model = Sequential()
         initializer = Zeros()
-        model.add(Dense(21, activation='relu', input_shape=(21,), kernel_initializer=initializer))
+        model.add(Dense(21, activation='relu', input_shape=(11,), kernel_initializer=initializer))
         model.add(Dense(32, activation='relu', kernel_initializer=initializer))        
         model.add(Dense(16, activation='relu', kernel_initializer=initializer))
         # model.add(Dense(self.action_size, activation='softmax'))
@@ -94,7 +94,7 @@ class DQNAgent():
             Q_values = self.main_network.predict(state)
             # print("Q_values train = {}".format(Q_values))
             
-            Q_values[0][action] = target_Q
+            Q_values[0][action - 1] = target_Q
             
             #train the main network
             self.main_network.fit(state, Q_values, epochs=1, verbose=0)

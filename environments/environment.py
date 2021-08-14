@@ -10,15 +10,99 @@ from kubernetes import client, config
 class K8Senvironment():
     
     def __init__(self):
-        self.observation_space_n = 99999999
-        self.action_space_n = configuration.NUM_OF_ACTIONS
-        self.action_space   = [0,1,2]
         config.load_kube_config()
         self.api = client.CustomObjectsApi()
-        self.reward = 0
-    
     
     def step(self, action):
+
+        self.set_replicas(action)
+        time.sleep(20)                   
+        state  = self.get_state()
+        reward = self.calculate_reward_state(state)
+
+        return state, reward    
+
+    def calculate_reward_state(self, state):
+        # calculate reward after action
+        reward = 0
+        
+        number_of_pods = int(state[0][0])
+        if number_of_pods > 10:
+            number_of_pods = 10   
+        pods_high_cpu = 0
+        pods_medium_cpu = 0
+        pods_low_cpu = 0
+        pods_not_spawned = configuration.MAX_NUM_PODS - number_of_pods
+        
+        for i in range(number_of_pods):
+            if state[0][i+1] > 200:
+                pods_high_cpu += 1    
+            elif state[0][i+1] < 50:
+                pods_low_cpu += 1
+            else:
+                pods_medium_cpu += 1
+
+        print("pods = {}, pods_high_cpu = {}, pods_medium_cpu = {}, pods_low_cpu={}".format(number_of_pods, pods_high_cpu, pods_medium_cpu, pods_low_cpu))
+
+        # Penalizaciones
+        if pods_high_cpu > 0 and pods_low_cpu == 0 and pods_medium_cpu == 0 and pods_not_spawned > 0:
+            reward -= 10
+        if pods_high_cpu == 0 and pods_low_cpu > 2 and pods_medium_cpu == 0:
+            reward -= 10
+        if pods_high_cpu > pods_medium_cpu:
+            reward -= 5   
+        if pods_low_cpu > pods_medium_cpu:
+            reward -= 5                     
+        if pods_high_cpu > 0 and pods_low_cpu > 0 and pods_medium_cpu == 0:
+            reward -= 5
+
+        # Recompensas
+        if pods_medium_cpu == number_of_pods:
+            reward += 10
+        if pods_medium_cpu > pods_high_cpu:
+            reward += 5            
+        if pods_medium_cpu > pods_low_cpu:
+            reward += 5       
+        if pods_high_cpu == configuration.MAX_NUM_PODS and number_of_pods == configuration.MAX_NUM_PODS:
+            reward += 10    
+        if pods_low_cpu < 3 and pods_high_cpu == 0 and pods_medium_cpu == 0:
+            reward += 10
+
+        print("Action = {}, Total reward= {}".format(number_of_pods, reward))
+        return reward
+
+    def get_state(self):
+
+        resource = self.api.list_namespaced_custom_object(group="metrics.k8s.io",version="v1beta1", namespace="php-apache", plural="pods")
+
+        count = 0
+        cpu = []
+        mem = []
+
+        for pod in resource["items"]:
+            if pod['metadata']['name'].startswith('php-apache'):
+                count += 1
+                if count <= 10 and pod['containers']:
+                    print("Pods >> {}".format(pod['containers']))
+                    cpu.append(round(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['cpu'])) / (configuration.CPUS * 1000000), 2))
+                    mem.append(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['memory'])))
+
+        cpu += [0] * (configuration.MAX_NUM_PODS - len(cpu))
+        mem += [0] * (configuration.MAX_NUM_PODS - len(mem))
+
+        # state = np.reshape(np.asarray([count] + cpu + mem), (1, 21))
+        state = np.reshape(np.asarray([count] + cpu), (1, 11))        
+        #print(state)
+        return state
+
+    def set_replicas(self, num_replicas):
+        print('Setting number of Replicas to: {}'.format(str(num_replicas)))
+        # os.system('kubectl scale deployment php-apache --replicas=3')
+        command = "kubectl scale deployment php-apache --replicas=" + str(num_replicas) + " -n php-apache"
+        # print(command)
+        os.system(command)
+
+"""     def step(self, action):
 
         if action == 0:         # if action is 2, do nothing
             self.reward = self.calculate_reward(action)     
@@ -39,8 +123,7 @@ class K8Senvironment():
 
         return self.state, self.reward
 
-    
-    def calculate_reward(self, action):
+    def calculate_reward_action(self, action):
         # calculate reward after action
         reward = 0
         total_reward = 0
@@ -95,34 +178,4 @@ class K8Senvironment():
         if number_of_pods > configuration.MIN_NUM_PODS:
             number_of_pods -= 1
             print("Removing pod number {}".format(number_of_pods + 1))            
-        self.set_replicas(number_of_pods)
-
-    def get_state(self):
-
-        resource = self.api.list_namespaced_custom_object(group="metrics.k8s.io",version="v1beta1", namespace="php-apache", plural="pods")
-
-        count = 0
-        cpu = []
-        mem = []
-
-        for pod in resource["items"]:
-            if pod['metadata']['name'].startswith('php-apache'):
-                count += 1
-                if count <= 10 and pod['containers']:
-                    # print("Pods >> {}".format(pod['containers']))
-                    cpu.append(round(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['cpu'])) / (configuration.CPUS * 1000000), 2))
-                    mem.append(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['memory'])))
-
-        cpu += [0] * (configuration.MAX_NUM_PODS - len(cpu))
-        mem += [0] * (configuration.MAX_NUM_PODS - len(mem))
-
-        state = np.reshape(np.asarray([count] + cpu + mem), (1, 21))
-        #print(state)
-        return state
-
-    def set_replicas(self, num_replicas):
-        print('Setting number of Replicas to: {}'.format(str(num_replicas)))
-        # os.system('kubectl scale deployment php-apache --replicas=3')
-        command = "kubectl scale deployment php-apache --replicas=" + str(num_replicas) + " -n php-apache"
-        # print(command)
-        os.system(command)
+        self.set_replicas(number_of_pods) """
