@@ -11,11 +11,11 @@ if __name__ == "__main__":
     batch_size = configuration.BATCH_SIZE
     # Creamos el entorno y el agente       
     env = K8Senvironment()
-    agent = DQNAgent(env.action_space)
+    agent = DQNAgent()
     total_reward = 0
     state = env.get_state()
     agent.epsilon = 0.99
-    agent.path = 'model.continuous'
+    agent.path = 'model.' + str(configuration.MAX_NUM_PODS) + 'continuous.keras'
     count = 0
     
     while True:  

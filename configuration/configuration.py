@@ -1,3 +1,4 @@
+import configuration
 from numpy.core.einsumfunc import _compute_size_by_dict
 from tensorflow.python.compat.compat import _update_forward_compatibility_date_number
 
@@ -7,12 +8,12 @@ NUM_TIMESTEPS               = 100
 
 NUM_OF_ACTIONS              = 3
 
-MAX_NUM_PODS                = 10
+MAX_NUM_PODS                = 5
 MIN_NUM_PODS                = 1
 
 BATCH_SIZE                  = 10
 
-PATH_MODEL                  = 'model'
+PATH_MODEL                  = 'model.' + str(MAX_NUM_PODS) + '.keras'
 
 CPUS                        = 1
 MEMORY                      = 2048

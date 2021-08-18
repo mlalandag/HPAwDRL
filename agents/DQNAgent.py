@@ -60,7 +60,7 @@ class DQNAgent():
 
         model = Sequential()
         initializer = Zeros()
-        model.add(Dense(21, activation='relu', input_shape=(11,), kernel_initializer=initializer))
+        model.add(Dense(21, activation='relu', input_shape=(configuration.MAX_NUM_PODS + 1,), kernel_initializer=initializer))
         model.add(Dense(32, activation='relu', kernel_initializer=initializer))        
         model.add(Dense(16, activation='relu', kernel_initializer=initializer))
         # model.add(Dense(self.action_size, activation='softmax'))

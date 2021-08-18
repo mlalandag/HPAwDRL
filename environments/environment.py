@@ -27,8 +27,8 @@ class K8Senvironment():
         reward = 0
         
         number_of_pods = int(state[0][0])
-        if number_of_pods > 10:
-            number_of_pods = 10   
+        if number_of_pods > configuration.MAX_NUM_PODS:
+            number_of_pods = configuration.MAX_NUM_PODS   
         pods_high_cpu = 0
         pods_medium_cpu = 0
         pods_low_cpu = 0
@@ -91,7 +91,7 @@ class K8Senvironment():
         mem += [0] * (configuration.MAX_NUM_PODS - len(mem))
 
         # state = np.reshape(np.asarray([count] + cpu + mem), (1, 21))
-        state = np.reshape(np.asarray([count] + cpu), (1, 11))        
+        state = np.reshape(np.asarray([count] + cpu), (1, configuration.MAX_NUM_PODS + 1))        
         #print(state)
         return state
 
