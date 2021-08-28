@@ -90,12 +90,12 @@ class DQNAgent():
         #compute the Q value using the target network
         for state, action, reward, next_state in minibatch:
             target_Q = (reward + self.gamma * np.amax(self.target_network.predict(next_state)))
-            print("target_Q >> " + target_Q)
+            print("target_Q >> " + str(target_Q))
                 
             #compute the Q value using the main network 
             Q_values = self.main_network.predict(state)
             # print("Q_values train = {}".format(Q_values))
-            print("Q_values >> " + Q_values)
+            print("Q_values >> " + str(Q_values))
             
             Q_values[0][action - 1] = target_Q
             

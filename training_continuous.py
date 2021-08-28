@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
         # El agente decide la siguiente accion y recoge 
         # el nuevo estado y la recompensa
-        action = agent.act(state)
+        action = agent.act(state, True)
         next_state, reward = env.step(action)
 
         #store the transition information

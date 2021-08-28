@@ -64,7 +64,7 @@ class K8Senvironment():
         if pods_low_cpu > 1 and pods_high_cpu == 0 and pods_medium_cpu == 0 and action < number_of_pods:
             reward += 10
 
-        print("Action = {}, Total reward= {}".format(number_of_pods, reward))
+        print("State = {},Action = {}, Total reward= {}".format(state, action, reward))
         return reward
 
     def get_state(self):
@@ -78,7 +78,7 @@ class K8Senvironment():
         for pod in resource["items"]:
             if pod['metadata']['name'].startswith('php-apache'):
                 count += 1
-                if count <= 10 and pod['containers']:
+                if count <= configuration.MAX_NUM_PODS and pod['containers']:
                     print("Pods >> {}".format(pod['containers']))
                     cpu.append(round(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['cpu'])) / (configuration.CPUS * 1000000), 2))
                     mem.append(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['memory'])))
