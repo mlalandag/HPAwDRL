@@ -15,7 +15,7 @@ if __name__ == "__main__":
     total_reward = 0
     state = env.get_state()
     agent.epsilon = 0.99
-    agent.path = 'model.' + str(configuration.MAX_NUM_PODS) + 'continuous.keras'
+    agent.path = 'model.' + str(configuration.MAX_NUM_PODS) + '.continuous.keras'
     count = 0
     
     while True:  

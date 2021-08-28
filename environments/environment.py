@@ -18,11 +18,11 @@ class K8Senvironment():
         self.set_replicas(action)
         time.sleep(20)                   
         state  = self.get_state()
-        reward = self.calculate_reward_state(state)
+        reward = self.calculate_reward_state(state, action)
 
         return state, reward    
 
-    def calculate_reward_state(self, state):
+    def calculate_reward_state(self, state, action):
         # calculate reward after action
         reward = 0
         
@@ -45,27 +45,23 @@ class K8Senvironment():
         print("pods = {}, pods_high_cpu = {}, pods_medium_cpu = {}, pods_low_cpu={}".format(number_of_pods, pods_high_cpu, pods_medium_cpu, pods_low_cpu))
 
         # Penalizaciones
-        if pods_high_cpu > 0 and pods_low_cpu == 0 and pods_medium_cpu == 0 and pods_not_spawned > 0:
-            reward -= 10
-        if pods_high_cpu == 0 and pods_low_cpu > 2 and pods_medium_cpu == 0:
-            reward -= 10
-        if pods_high_cpu > pods_medium_cpu:
-            reward -= 5   
-        if pods_low_cpu > pods_medium_cpu:
-            reward -= 5                     
-        if pods_high_cpu > 0 and pods_low_cpu > 0 and pods_medium_cpu == 0:
-            reward -= 5
+        if pods_high_cpu > 0 and pods_low_cpu == 0 and pods_medium_cpu == 0 and pods_not_spawned > 0 and action <= pods_high_cpu:
+            reward -= 50
+        if pods_high_cpu == 0 and pods_low_cpu > 2 and pods_medium_cpu == 0 and action >= number_of_pods:
+            reward -= 30
+        if pods_high_cpu > pods_medium_cpu and action <= number_of_pods:
+            reward -= 30
+        if pods_low_cpu > pods_medium_cpu and action >= number_of_pods:
+            reward -= 10                     
 
         # Recompensas
-        if pods_medium_cpu == number_of_pods:
-            reward += 10
-        if pods_medium_cpu > pods_high_cpu:
-            reward += 5            
-        if pods_medium_cpu > pods_low_cpu:
-            reward += 5       
+        if pods_high_cpu > 0 and pods_low_cpu == 0 and pods_not_spawned > 0 and action > number_of_pods:
+            reward += 50
+        if pods_medium_cpu == number_of_pods and action == number_of_pods:
+            reward += 30                 
         if pods_high_cpu == configuration.MAX_NUM_PODS and number_of_pods == configuration.MAX_NUM_PODS:
             reward += 10    
-        if pods_low_cpu < 3 and pods_high_cpu == 0 and pods_medium_cpu == 0:
+        if pods_low_cpu > 1 and pods_high_cpu == 0 and pods_medium_cpu == 0 and action < number_of_pods:
             reward += 10
 
         print("Action = {}, Total reward= {}".format(number_of_pods, reward))

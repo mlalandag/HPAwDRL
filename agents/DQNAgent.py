@@ -41,13 +41,14 @@ class DQNAgent():
 
         self.path = configuration.PATH_MODEL
         
-    def act(self, state):
+    def act(self, state, train):
 
-        self.epsilon = max(self.min_epsilon, self.epsilon * self.epsilon_decay)
-        print("Epsilon = {}".format(self.epsilon))
+        if train:
+            self.epsilon = max(self.min_epsilon, self.epsilon * self.epsilon_decay)
+            print("Epsilon = {}".format(self.epsilon))
 
-        if random.uniform(0,1) < self.epsilon:
-            return np.random.randint(self.action_size) + 1
+            if random.uniform(0,1) < self.epsilon:
+                return np.random.randint(self.action_size) + 1
         
         # print(state.shape)
         Q_values = self.main_network.predict(state)
@@ -59,13 +60,13 @@ class DQNAgent():
     def build_network(self):
 
         model = Sequential()
-        initializer = Zeros()
-        model.add(Dense(21, activation='relu', input_shape=(configuration.MAX_NUM_PODS + 1,), kernel_initializer=initializer))
-        model.add(Dense(32, activation='relu', kernel_initializer=initializer))        
-        model.add(Dense(16, activation='relu', kernel_initializer=initializer))
+        # initializer = Zeros()
+        model.add(Dense(21, activation='relu', input_shape=(configuration.MAX_NUM_PODS + 1,), kernel_initializer='glorot_uniform'))
+        model.add(Dense(32, activation='relu', kernel_initializer='glorot_uniform'))        
+        model.add(Dense(16, activation='relu', kernel_initializer='glorot_uniform'))
         # model.add(Dense(self.action_size, activation='softmax'))
         # model.compile(loss='categorical_crossentropy', optimizer=Adam(), metrics=['accuracy'])
-        model.add(Dense(self.action_size, kernel_initializer=initializer))        
+        model.add(Dense(self.action_size, kernel_initializer='glorot_uniform'))        
         model.compile(loss='mse', optimizer=Adam(), metrics=['accuracy'])        
 
         return model
@@ -89,10 +90,12 @@ class DQNAgent():
         #compute the Q value using the target network
         for state, action, reward, next_state in minibatch:
             target_Q = (reward + self.gamma * np.amax(self.target_network.predict(next_state)))
+            print("target_Q >> " + target_Q)
                 
             #compute the Q value using the main network 
             Q_values = self.main_network.predict(state)
             # print("Q_values train = {}".format(Q_values))
+            print("Q_values >> " + Q_values)
             
             Q_values[0][action - 1] = target_Q
             
