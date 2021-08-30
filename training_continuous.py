@@ -9,9 +9,11 @@ import random
 if __name__ == "__main__":
 
     batch_size = configuration.BATCH_SIZE
+    
     # Creamos el entorno y el agente       
     env = K8Senvironment()
-    agent = DQNAgent()
+    agent = DQNAgent(configuration.ALPHA, configuration.GAMMA, configuration.MAX_NUM_PODS,
+                           configuration.MIN_EPSILON, configuration.EPSILON, configuration.EPSILON_DECAY)
     total_reward = 0
     state = env.get_state()
     agent.epsilon = 0.99
@@ -31,14 +33,14 @@ if __name__ == "__main__":
         action = agent.act(state, True)
         next_state, reward = env.step(action)
 
+        print("step = {}, state = {}, action = {}, reward= {}, total_reward={:.2f}".format(count, state, action, reward, total_reward)) 
+
         #store the transition information
         agent.store_transition(state, action, reward, next_state)
 
         state = next_state
         # agent.update_network parameters
-        total_reward += reward
-
-        print("step = {}, state = {}, reward= {}, total_reward={:.2f}".format(count, state, reward, total_reward))      
+        total_reward += reward     
 
         if len(agent.replay_buffer) > batch_size:
             agent.train(batch_size)           

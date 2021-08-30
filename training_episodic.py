@@ -11,7 +11,8 @@ if __name__ == "__main__":
     batch_size = configuration.BATCH_SIZE
     # Creamos el entorno y el agente       
     env = K8Senvironment()
-    agent = DQNAgent()
+    agent = DQNAgent(configuration.ALPHA, configuration.GAMMA, configuration.MAX_NUM_PODS,
+                           configuration.MIN_EPSILON, configuration.EPSILON, configuration.EPSILON_DECAY)
     total_reward = 0
     state = env.get_state()
     

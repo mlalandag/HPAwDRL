@@ -10,22 +10,18 @@ from configuration import configuration
 
 class DQNAgent():
     
-    def __init__(self):
+    def __init__(self, alpha, gamma, action_size, min_epsilon, epsilon, epsilon_decay):
+
         # Hyperparameters
-        self.alpha = 0.1
-        self.gamma = 0.9
-        self.action_size = configuration.MAX_NUM_PODS
-        
+        self.alpha = alpha
+        self.gamma = gamma
+        self.action_size = action_size
+        self.min_epsilon = min_epsilon   
+        self.epsilon = epsilon
+        self.epsilon_decay = epsilon_decay
+
         #define the replay buffer
         self.replay_buffer = deque(maxlen=5000)
-        
-        #define the discount factor
-        self.gamma = 0.9  
-        
-        #define the epsilon value
-        self.min_epsilon = 0.1   
-        self.epsilon = 0.9
-        self.epsilon_decay = 0.99
         
         #define the update rate at which we want to update the target network
         self.update_rate = configuration.UPDATE_RATE  
@@ -52,7 +48,7 @@ class DQNAgent():
         
         # print(state.shape)
         Q_values = self.main_network.predict(state)
-        print("Action = {}, Q_values = {}".format(np.argmax(Q_values[0]) + 1, Q_values))
+        # print("Action = {}, Q_values = {}".format(np.argmax(Q_values[0]) + 1, Q_values))
         
         return np.argmax(Q_values[0]) + 1      
 
@@ -71,9 +67,6 @@ class DQNAgent():
 
         return model
 
-    #We learned that we train DQN by randomly sampling a minibatch of transitions from the
-    #replay buffer. So, we define a function called store_transition which stores the transition information
-    #into the replay buffer
 
     def store_transition(self, state, action, reward, next_state):
         self.replay_buffer.append((state, action, reward, next_state))
@@ -90,12 +83,12 @@ class DQNAgent():
         #compute the Q value using the target network
         for state, action, reward, next_state in minibatch:
             target_Q = (reward + self.gamma * np.amax(self.target_network.predict(next_state)))
-            print("target_Q >> " + str(target_Q))
+            # print("target_Q >> " + str(target_Q))
                 
             #compute the Q value using the main network 
             Q_values = self.main_network.predict(state)
             # print("Q_values train = {}".format(Q_values))
-            print("Q_values >> " + str(Q_values))
+            # print("Q_values >> " + str(Q_values))
             
             Q_values[0][action - 1] = target_Q
             

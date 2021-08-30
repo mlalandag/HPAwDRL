@@ -15,12 +15,13 @@ class K8Senvironment():
     
     def step(self, action):
 
-        self.set_replicas(action)
-        time.sleep(20)                   
         state  = self.get_state()
+        self.set_replicas(action)
+        time.sleep(15)                   
+        new_state  = self.get_state()
         reward = self.calculate_reward_state(state, action)
 
-        return state, reward    
+        return new_state, reward    
 
     def calculate_reward_state(self, state, action):
         # calculate reward after action
@@ -42,29 +43,31 @@ class K8Senvironment():
             else:
                 pods_medium_cpu += 1
 
-        print("pods = {}, pods_high_cpu = {}, pods_medium_cpu = {}, pods_low_cpu={}".format(number_of_pods, pods_high_cpu, pods_medium_cpu, pods_low_cpu))
+        # print("pods = {}, pods_high_cpu = {}, pods_medium_cpu = {}, pods_low_cpu={}".format(number_of_pods, pods_high_cpu, pods_medium_cpu, pods_low_cpu))
 
-        # Penalizaciones
-        if pods_high_cpu > 0 and pods_low_cpu == 0 and pods_medium_cpu == 0 and pods_not_spawned > 0 and action <= pods_high_cpu:
-            reward -= 50
-        if pods_high_cpu == 0 and pods_low_cpu > 2 and pods_medium_cpu == 0 and action >= number_of_pods:
-            reward -= 30
-        if pods_high_cpu > pods_medium_cpu and action <= number_of_pods:
-            reward -= 30
+        # Penalizaciones por decisiones incorrectas
+        if pods_high_cpu > 0 and pods_low_cpu == 0 and pods_medium_cpu == 0 and pods_not_spawned > 0 and action <= number_of_pods:
+            reward -= 10
+        if pods_high_cpu == 0 and pods_low_cpu > 1 and pods_medium_cpu == 0 and action >= number_of_pods:
+            reward -= 10
+        if pods_high_cpu > pods_medium_cpu and pods_not_spawned > 0 and action <= number_of_pods:
+            reward -= 5
         if pods_low_cpu > pods_medium_cpu and action >= number_of_pods:
-            reward -= 10                     
+            reward -= 5                   
 
-        # Recompensas
+        # Recompensas por decisiones correctas
         if pods_high_cpu > 0 and pods_low_cpu == 0 and pods_not_spawned > 0 and action > number_of_pods:
-            reward += 50
+            reward += 10
         if pods_medium_cpu == number_of_pods and action == number_of_pods:
-            reward += 30                 
+            reward += 10                 
         if pods_high_cpu == configuration.MAX_NUM_PODS and number_of_pods == configuration.MAX_NUM_PODS:
-            reward += 10    
+            reward += 5    
         if pods_low_cpu > 1 and pods_high_cpu == 0 and pods_medium_cpu == 0 and action < number_of_pods:
             reward += 10
+        if pods_low_cpu != 0 and pods_high_cpu == 0 and pods_medium_cpu != 0 and action <= number_of_pods:
+            reward += 5
 
-        print("State = {},Action = {}, Total reward= {}".format(state, action, reward))
+        # print("State = {}, Action = {}, reward= {}".format(state, action, reward))
         return reward
 
     def get_state(self):
@@ -79,8 +82,8 @@ class K8Senvironment():
             if pod['metadata']['name'].startswith('php-apache'):
                 count += 1
                 if count <= configuration.MAX_NUM_PODS and pod['containers']:
-                    print("Pods >> {}".format(pod['containers']))
-                    cpu.append(round(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['cpu'])) / (configuration.CPUS * 1000000), 2))
+                    # print("Pods >> {}".format(pod['containers']))
+                    cpu.append(round(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['cpu'])) / 1000000, 2))
                     mem.append(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['memory'])))
 
         cpu += [0] * (configuration.MAX_NUM_PODS - len(cpu))
