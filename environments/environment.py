@@ -17,7 +17,7 @@ class K8Senvironment():
 
         state  = self.get_state()
         self.set_replicas(action)
-        time.sleep(15)                   
+        time.sleep(10)                   
         new_state  = self.get_state()
         reward = self.calculate_reward_state(state, action)
 
@@ -52,6 +52,8 @@ class K8Senvironment():
             reward -= 10
         if pods_high_cpu > pods_medium_cpu and pods_not_spawned > 0 and action <= number_of_pods:
             reward -= 5
+        if pods_medium_cpu == number_of_pods and pods_not_spawned > 0 and action > number_of_pods:
+            reward -= 5 
         if pods_low_cpu > pods_medium_cpu and action >= number_of_pods:
             reward -= 5                   
 
@@ -61,7 +63,9 @@ class K8Senvironment():
         if pods_medium_cpu == number_of_pods and action == number_of_pods:
             reward += 10                 
         if pods_high_cpu == configuration.MAX_NUM_PODS and number_of_pods == configuration.MAX_NUM_PODS:
-            reward += 5    
+            reward += 5   
+        if pods_medium_cpu == number_of_pods and action < number_of_pods:
+            reward -= 5 
         if pods_low_cpu > 1 and pods_high_cpu == 0 and pods_medium_cpu == 0 and action < number_of_pods:
             reward += 10
         if pods_low_cpu != 0 and pods_high_cpu == 0 and pods_medium_cpu != 0 and action <= number_of_pods:

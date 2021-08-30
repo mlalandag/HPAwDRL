@@ -14,6 +14,8 @@ if __name__ == "__main__":
     env = K8Senvironment()
     agent = DQNAgent(configuration.ALPHA, configuration.GAMMA, configuration.MAX_NUM_PODS,
                            configuration.MIN_EPSILON, configuration.EPSILON, configuration.EPSILON_DECAY)
+    #agent.path = 'model.5.1.continuous.keras'
+    #agent.load_weights()
     total_reward = 0
     state = env.get_state()
     agent.epsilon = 0.99

@@ -48,7 +48,8 @@ class DQNAgent():
         
         # print(state.shape)
         Q_values = self.main_network.predict(state)
-        # print("Action = {}, Q_values = {}".format(np.argmax(Q_values[0]) + 1, Q_values))
+        print("Q_values = {}".format(Q_values))
+        # print("Q_values = {}".format(np.argmax(Q_values[0]) + 1, Q_values))
         
         return np.argmax(Q_values[0]) + 1      
 
