@@ -53,9 +53,13 @@ class K8Senvironment():
         if pods_high_cpu > pods_medium_cpu and pods_not_spawned > 0 and action <= number_of_pods:
             reward -= 5
         if pods_medium_cpu == number_of_pods and pods_not_spawned > 0 and action > number_of_pods:
-            reward -= 5 
+            reward -= 5
+        if pods_medium_cpu > 1 and pods_low_cpu == 0 and pods_high_cpu == 0 and action - number_of_pods > 1:
+            reward -= 10 
         if pods_low_cpu > pods_medium_cpu and action >= number_of_pods:
-            reward -= 5                   
+            reward -= 5
+        if pods_low_cpu > 1 and pods_medium_cpu == 0 and pods_high_cpu == 0 and action - number_of_pods > 1:
+            reward -= 10                     
 
         # Recompensas por decisiones correctas
         if pods_high_cpu > 0 and pods_low_cpu == 0 and pods_not_spawned > 0 and action > number_of_pods:
