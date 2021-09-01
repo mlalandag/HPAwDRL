@@ -3,8 +3,8 @@ from numpy.core.einsumfunc import _compute_size_by_dict
 from tensorflow.python.compat.compat import _update_forward_compatibility_date_number
 
 
-NUM_EPISODES                = 10
-NUM_TIMESTEPS               = 100
+NUM_EPISODES                = 30
+NUM_TIMESTEPS               = 150
 
 MAX_NUM_PODS                = 5
 MIN_NUM_PODS                = 1
@@ -21,4 +21,4 @@ GAMMA                       = 0.9
 
 MIN_EPSILON                 = 0.05   
 EPSILON                     = 0.9
-EPSILON_DECAY               = 0.99
+EPSILON_DECAY               = 0.95

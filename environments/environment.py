@@ -17,7 +17,7 @@ class K8Senvironment():
 
         state  = self.get_state()
         self.set_replicas(action)
-        time.sleep(10)                   
+        time.sleep(15)                   
         new_state  = self.get_state()
         reward = self.calculate_reward_state(state, action)
 
@@ -93,6 +93,9 @@ class K8Senvironment():
                     # print("Pods >> {}".format(pod['containers']))
                     cpu.append(round(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['cpu'])) / 1000000, 2))
                     mem.append(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['memory'])))
+
+        if count > configuration.MAX_NUM_PODS:
+            count = configuration.MAX_NUM_PODS
 
         cpu += [0] * (configuration.MAX_NUM_PODS - len(cpu))
         mem += [0] * (configuration.MAX_NUM_PODS - len(mem))
