@@ -7,7 +7,6 @@ import time
 import random
 
 if __name__ == "__main__":
-
     batch_size = configuration.BATCH_SIZE
     # Creamos el entorno y el agente       
     env = K8Senvironment()
@@ -17,36 +16,27 @@ if __name__ == "__main__":
     state = env.get_state()
     
     for i in range(configuration.NUM_EPISODES):        
-        # Inicializamos reward
+        # Inicializamos la recompensa
         reward  = 0
-        time_step = 0
-        agent.epsilon = 0.9
 
         for t in range(configuration.NUM_TIMESTEPS):
-
-            #update the time step
-            time_step += 1
-            
-            #update the target network
-            if time_step % agent.update_rate == 0:
+            # Actualizamos la target network con la frecuencia deseada
+            if t % agent.update_rate == 0:
                 agent.update_target_network()
-
             # El agente decide la siguiente accion y recoge 
             # el nuevo estado y la recompensa
             action = agent.act(state)
             next_state, reward = env.step(action)
-
-            #store the transition information
+            # Guardamos la transición en el replay buffer
             agent.store_transition(state, action, reward, next_state)
-
+            # Actualizamos estado con el nuevo estado
             state = next_state
-            # agent.update_network parameters
             total_reward += reward
-
             print("episode = {}, step = {}, state = {}, reward= {}, total_reward={:.2f}".format(i+1, t+1, state, reward, total_reward))      
-
+            # Entrenamos el agente
             if len(agent.replay_buffer) > batch_size:
                 agent.train(batch_size)           
 
+        # Salvamos los pesos del modelo al finalizar cada episodio
         print("Saving weights ... ")
         agent.save_weights()            
