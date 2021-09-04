@@ -22,13 +22,9 @@ if __name__ == "__main__":
 
     while True:        
 
-        # El agente decide la siguiente accion y recoge 
-        # el nuevo estado y la recompensa
         action = agent.act(state, False)
         next_state, reward = env.step(action)
-
         print("state = {}, action = {}, reward= {}, total_reward={:.2f}".format(state, action, reward, total_reward))       
-
         state = next_state
         total_reward += reward
 
