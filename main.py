@@ -24,8 +24,8 @@ if __name__ == "__main__":
 
         action = agent.act(state, False)
         next_state, reward = env.step(action)
+        total_reward += reward        
         print("state = {}, action = {}, reward= {}, total_reward={:.2f}".format(state, action, reward, total_reward))       
-        state = next_state
-        total_reward += reward
-
-        time.sleep(30)                
+        time.sleep(30)
+        state = env.get_state()
+                
