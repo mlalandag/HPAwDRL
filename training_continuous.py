@@ -41,7 +41,6 @@ if __name__ == "__main__":
         agent.store_transition(state, action, reward, next_state)
 
         state = next_state
-        # agent.update_network parameters
         total_reward += reward     
 
         if len(agent.replay_buffer) > batch_size:
