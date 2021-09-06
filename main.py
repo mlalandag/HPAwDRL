@@ -15,7 +15,7 @@ if __name__ == "__main__":
     agent = DQNAgent(configuration.ALPHA, configuration.GAMMA, configuration.MAX_NUM_PODS,
                            configuration.MIN_EPSILON, configuration.EPSILON, configuration.EPSILON_DECAY)
     # Cargamos el modelo
-    agent.path = 'model.5.1.continuous.keras'
+    agent.path = './models/model.5.episodic.keras'
     agent.load_weights()
     total_reward = 0
     reward  = 0
@@ -27,6 +27,7 @@ if __name__ == "__main__":
     while True:  
 
         count += 1
+        print("count = {}".format(count))
 
         action = agent.act(state, False)
         next_state, reward = env.step(action)
@@ -36,18 +37,19 @@ if __name__ == "__main__":
         state = env.get_state()
         
         number_of_pods = int(state[0][0])
-        cpu_usage = state[0][1:configuration.MAX_NUM_PODS]
-        print("cpu_usage = " + cpu_usage)
+        cpu_usage = state[0][1:configuration.MAX_NUM_PODS + 1]
+        print("cpu_usage = {}".format(cpu_usage))
         total_cpu_usage = np.sum(cpu_usage)
-        print("total_cpu_usage = " + total_cpu_usage)
+        print("total_cpu_usage = {}".format(total_cpu_usage))
         buffer_number_of_pods.append(number_of_pods)
         buffer_total_cpu_usage.append(total_cpu_usage)     
 
-        if count % 100 == 0:
+        if count % 3 == 0:
+            print("Plotting")
             graph = plt.figure()
-            plt.plot([pods for pods in range(len(buffer_number_of_pods))], [cpu for cpu in range(len(buffer_total_cpu_usage))])
             plt.ylabel('number of pods')
             plt.xlabel('cpu usage')
-            plt.show()
-            graph.savefig('performance.jpg')
+            plt.yticks(range(1, configuration.MAX_NUM_PODS + 1))
+            plt.plot(buffer_total_cpu_usage,buffer_number_of_pods, 'o', color='black')
+            graph.savefig('./graphs/dlr/performance.jpg')   
                 

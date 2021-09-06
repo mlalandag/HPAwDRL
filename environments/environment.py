@@ -6,6 +6,7 @@ import sys
 import os
 import re
 from kubernetes import client, config
+from environments import rewards
 
 class K8Senvironment():
     
@@ -17,7 +18,7 @@ class K8Senvironment():
 
         state  = self.get_state()
         self.set_replicas(action)
-        time.sleep(15)                   
+        time.sleep(5)                   
         new_state  = self.get_state()
         reward = self.calculate_reward(state, action)
 
@@ -35,45 +36,72 @@ class K8Senvironment():
         pods_low_cpu = 0
         pods_not_spawned = configuration.MAX_NUM_PODS - number_of_pods
         
-        for i in range(number_of_pods):
-            if state[0][i+1] > 200:
+        # for i in range(number_of_pods):
+        #     if state[0][i+1] > 300:
+        #         pods_high_cpu += 1    
+        #     elif state[0][i+1] < 100:
+        #         pods_low_cpu += 1
+        #     else:
+        #         pods_medium_cpu += 1
+        for cpu_usage in state[0][1:configuration.MAX_NUM_PODS + 1]:
+            if cpu_usage == 3:
                 pods_high_cpu += 1    
-            elif state[0][i+1] < 50:
+            elif cpu_usage == 1:
                 pods_low_cpu += 1
             else:
                 pods_medium_cpu += 1
 
+        pods_state = [pods_low_cpu, pods_medium_cpu, pods_high_cpu, action]
+        print("Pods state = {}".format(pods_state))
+        key = "["+str(pods_low_cpu)+", "+str(pods_medium_cpu)+", "+str(pods_high_cpu)+", "+str(action)+"]"
+        print("Key >>> {}".format(key))
+        reward = rewards.state_rewards[key]
+        print("Reward >>> {}".format(reward))
+
         # print("pods = {}, pods_high_cpu = {}, pods_medium_cpu = {}, pods_low_cpu={}".format(number_of_pods, pods_high_cpu, pods_medium_cpu, pods_low_cpu))
 
         # Penalizaciones por decisiones incorrectas
-        if pods_high_cpu > 0 and pods_low_cpu == 0 and pods_medium_cpu == 0 and pods_not_spawned > 0 and action <= number_of_pods:
-            reward -= 10
-        if pods_high_cpu == 0 and pods_low_cpu > 1 and pods_medium_cpu == 0 and action >= number_of_pods:
-            reward -= 10
-        if pods_high_cpu > pods_medium_cpu and pods_not_spawned > 0 and action <= number_of_pods:
-            reward -= 5
-        if pods_medium_cpu == number_of_pods and pods_not_spawned > 0 and action > number_of_pods:
-            reward -= 5
-        if pods_medium_cpu > 1 and pods_low_cpu == 0 and pods_high_cpu == 0 and action - number_of_pods > 1:
-            reward -= 10 
-        if pods_low_cpu > pods_medium_cpu and action >= number_of_pods:
-            reward -= 5
-        if pods_low_cpu > 1 and pods_medium_cpu == 0 and pods_high_cpu == 0 and action - number_of_pods > 1:
-            reward -= 10                     
+        # if pods_high_cpu > 0 and pods_low_cpu == 0 and pods_medium_cpu == 0 and pods_not_spawned > 0 and action <= number_of_pods:
+        #     reward -= 1
+        #     print("Penalizacion 1")
+        # if pods_high_cpu == 0 and pods_low_cpu > 1 and pods_medium_cpu == 0 and action >= number_of_pods:
+        #     reward -= 1
+        #     print("Penalizacion 2")
+        # if pods_high_cpu > pods_medium_cpu and pods_not_spawned > 0 and action <= number_of_pods:
+        #     reward -= 0.5
+        #     print("Penalizacion 3")
+        # if pods_medium_cpu == number_of_pods and pods_not_spawned > 0 and action > number_of_pods:
+        #     reward -= 0.5
+        #     print("Penalizacion 4")
+        # if pods_medium_cpu > 1 and pods_low_cpu == 0 and pods_high_cpu == 0 and action - number_of_pods > 1:
+        #     reward -= 1 
+        #     print("Penalizacion 5")
+        # if pods_low_cpu > pods_medium_cpu and action >= number_of_pods:
+        #     reward -= 0.5
+        #     print("Penalizacion 6")
+        # if pods_low_cpu > 1 and pods_medium_cpu == 0 and pods_high_cpu == 0 and action - number_of_pods > 1:
+        #     reward -= 1
+        #     print("Penalizacion 7")         
 
-        # Recompensas por decisiones correctas
-        if pods_high_cpu > 0 and pods_low_cpu == 0 and pods_not_spawned > 0 and action > number_of_pods:
-            reward += 10
-        if pods_medium_cpu == number_of_pods and action == number_of_pods:
-            reward += 10                 
-        if pods_high_cpu == configuration.MAX_NUM_PODS and number_of_pods == configuration.MAX_NUM_PODS:
-            reward += 5   
-        if pods_medium_cpu == number_of_pods and action < number_of_pods:
-            reward -= 5 
-        if pods_low_cpu > 1 and pods_high_cpu == 0 and pods_medium_cpu == 0 and action < number_of_pods:
-            reward += 10
-        if pods_low_cpu != 0 and pods_high_cpu == 0 and pods_medium_cpu != 0 and action <= number_of_pods:
-            reward += 5
+        # # Recompensas por decisiones correctas
+        # if pods_high_cpu > 0 and pods_low_cpu == 0 and pods_not_spawned > 0 and action > number_of_pods:
+        #     reward += 1
+        #     print("Recompensa 1")
+        # if pods_medium_cpu == number_of_pods and action == number_of_pods:
+        #     reward += 1
+        #     print("Recompensa 2")            
+        # if pods_high_cpu == configuration.MAX_NUM_PODS and number_of_pods == configuration.MAX_NUM_PODS:
+        #     reward += 0.5
+        #     print("Recompensa 3")
+        # if pods_medium_cpu == number_of_pods and action < number_of_pods:
+        #     reward -= 0.5
+        #     print("Recompensa 4")
+        # if pods_low_cpu > 1 and pods_high_cpu == 0 and pods_medium_cpu == 0 and action < number_of_pods:
+        #     reward += 1
+        #     print("Recompensa 5")
+        # if pods_low_cpu != 0 and pods_high_cpu == 0 and pods_medium_cpu != 0 and action <= number_of_pods:
+        #     reward += 0.5
+        #     print("Recompensa 6")
 
         # print("State = {}, Action = {}, reward= {}".format(state, action, reward))
         return reward
@@ -100,8 +128,22 @@ class K8Senvironment():
         cpu += [0] * (configuration.MAX_NUM_PODS - len(cpu))
         mem += [0] * (configuration.MAX_NUM_PODS - len(mem))
 
-        state = np.reshape(np.asarray([count] + cpu), (1, configuration.MAX_NUM_PODS + 1))        
-        #print(state)
+        state = np.reshape(np.asarray([count] + cpu), (1, configuration.MAX_NUM_PODS + 1)) 
+        print("State = {}".format(state))
+
+        discretized_state = []
+        discretized_state.append(int(state[0][0]))
+        for cpu_usage in state[0][1:configuration.MAX_NUM_PODS + 1]:
+            if cpu_usage > 300:
+                discretized_state.append(3)    
+            elif cpu_usage < 100 and cpu_usage > 0:
+                discretized_state.append(1)
+            elif cpu_usage == 0.0:
+                discretized_state.append(0)
+            else:
+                discretized_state.append(2)
+
+        print("Discretized state = {}".format(discretized_state))
         return state
 
     def set_replicas(self, num_replicas):

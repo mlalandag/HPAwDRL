@@ -85,7 +85,7 @@ class DQNAgent():
             # print("Q_values >> " + str(Q_values))
             
             # Actualizamos el valor predicho por la Main con el target_Q 
-            Q_values[0][action - 1] += self. alpha * (target_Q - Q_values[0][action - 1])
+            Q_values[0][action - 1] += self.alpha * (target_Q - Q_values[0][action - 1])
             
             # Entrenamos la Main network
             self.main_network.fit(state, Q_values, epochs=1, verbose=0)
