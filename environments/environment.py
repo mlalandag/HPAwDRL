@@ -28,7 +28,7 @@ class K8Senvironment():
         # calculate reward after action
         reward = 0
         
-        number_of_pods = int(state[0][0])
+        number_of_pods = int(state[0])
         if number_of_pods > configuration.MAX_NUM_PODS:
             number_of_pods = configuration.MAX_NUM_PODS   
         pods_high_cpu = 0
@@ -37,13 +37,14 @@ class K8Senvironment():
         pods_not_spawned = configuration.MAX_NUM_PODS - number_of_pods
         
         # for i in range(number_of_pods):
-        #     if state[0][i+1] > 300:
+        #     if state[i+1] > 300:
         #         pods_high_cpu += 1    
-        #     elif state[0][i+1] < 100:
+        #     elif state[i+1] < 100:
         #         pods_low_cpu += 1
         #     else:
         #         pods_medium_cpu += 1
-        for cpu_usage in state[0][1:configuration.MAX_NUM_PODS + 1]:
+
+        for cpu_usage in state[1:configuration.MAX_NUM_PODS + 1]:
             if cpu_usage == 3:
                 pods_high_cpu += 1    
             elif cpu_usage == 1:
@@ -51,6 +52,8 @@ class K8Senvironment():
             else:
                 pods_medium_cpu += 1
 
+        print("State = {}".format(state))
+        print("pods_low_cpu = {}, pods_medium_cpu = {}, pods_high_cpu = {}, action={}".format(pods_low_cpu, pods_medium_cpu, pods_high_cpu, action))
         pods_state = [pods_low_cpu, pods_medium_cpu, pods_high_cpu, action]
         print("Pods state = {}".format(pods_state))
         key = "["+str(pods_low_cpu)+", "+str(pods_medium_cpu)+", "+str(pods_high_cpu)+", "+str(action)+"]"
@@ -131,8 +134,7 @@ class K8Senvironment():
         state = np.reshape(np.asarray([count] + cpu), (1, configuration.MAX_NUM_PODS + 1)) 
         print("State = {}".format(state))
 
-        discretized_state = []
-        discretized_state.append(int(state[0][0]))
+        discretized_state = [count]
         for cpu_usage in state[0][1:configuration.MAX_NUM_PODS + 1]:
             if cpu_usage > 300:
                 discretized_state.append(3)    
@@ -144,7 +146,7 @@ class K8Senvironment():
                 discretized_state.append(2)
 
         print("Discretized state = {}".format(discretized_state))
-        return state
+        return discretized_state
 
     def set_replicas(self, num_replicas):
         print('Setting number of Replicas to: {}'.format(str(num_replicas)))

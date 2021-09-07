@@ -54,7 +54,7 @@ class DQNAgent():
     def build_network(self):
 
         model = Sequential()
-        model.add(Dense(21, activation='relu', input_shape=(configuration.MAX_NUM_PODS + 1,), kernel_initializer='glorot_uniform'))
+        model.add(Dense(configuration.MAX_NUM_PODS + 1, activation='relu', input_shape=(configuration.MAX_NUM_PODS + 1,), kernel_initializer='glorot_uniform'))
         model.add(Dense(32, activation='relu', kernel_initializer='glorot_uniform'))        
         model.add(Dense(16, activation='relu', kernel_initializer='glorot_uniform'))
         model.add(Dense(self.action_size, kernel_initializer='glorot_uniform'))        

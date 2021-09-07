@@ -36,8 +36,8 @@ if __name__ == "__main__":
         time.sleep(30)
         state = env.get_state()
         
-        number_of_pods = int(state[0][0])
-        cpu_usage = state[0][1:configuration.MAX_NUM_PODS + 1]
+        number_of_pods = int(state[0])
+        cpu_usage = state[1:configuration.MAX_NUM_PODS + 1]
         print("cpu_usage = {}".format(cpu_usage))
         total_cpu_usage = np.sum(cpu_usage)
         print("total_cpu_usage = {}".format(total_cpu_usage))

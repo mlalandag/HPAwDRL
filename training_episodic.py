@@ -47,8 +47,8 @@ if __name__ == "__main__":
             if len(agent.replay_buffer) > batch_size:
                 agent.train(batch_size)
 
-            number_of_pods = int(state[0][0])
-            cpu_usage = state[0][1:configuration.MAX_NUM_PODS + 1]
+            number_of_pods = int(state[0])
+            cpu_usage = state[1:configuration.MAX_NUM_PODS + 1]
             total_cpu_usage = np.sum(cpu_usage)
             buffer_number_of_pods.append(number_of_pods)
             buffer_total_cpu_usage.append(total_cpu_usage)     
