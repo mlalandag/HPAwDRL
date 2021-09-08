@@ -18,7 +18,7 @@ class K8Senvironment():
 
         state  = self.get_state()
         self.set_replicas(action)
-        time.sleep(10)                   
+        time.sleep(15)                   
         reward = self.calculate_reward(state, action)
         new_state  = self.get_state()
 
