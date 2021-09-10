@@ -125,9 +125,11 @@ class K8Senvironment():
 
         for pod in resource["items"]:
             if pod['metadata']['name'].startswith('php-apache'):
+                # for i in api_response.items:
+                #     print(i.metadata.name + " " + i.status.phase)
                 count += 1
                 if count <= configuration.MAX_NUM_PODS and pod['containers']:
-                    # print("Pods >> {}".format(pod['containers']))
+                    print("Pods >> {}".format(pod['containers']))
                     cpu.append(round(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['cpu'])) / 1000000, 2))
                     mem.append(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['memory'])))
 
