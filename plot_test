@@ -1,0 +1,20 @@
+import matplotlib.pyplot        as plt
+import numpy                    as np
+from datetime import datetime, timedelta
+
+if __name__ == "__main__":
+
+    y = [4,2,3,5,1]
+    x = [datetime.now() - timedelta(hours=4),
+         datetime.now() - timedelta(hours=3),
+         datetime.now() - timedelta(hours=2),
+         datetime.now() - timedelta(hours=1),
+         datetime.now()]
+
+    print("Plotting pods vs time")
+    graph = plt.figure()
+    plt.ylabel('number of pods')
+    plt.xlabel('step')
+    plt.plot(x, y)
+    plt.gcf().autofmt_xdate()    
+    plt.show()

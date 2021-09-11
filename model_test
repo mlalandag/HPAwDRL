@@ -17,4 +17,4 @@ if __name__ == "__main__":
     state = [[4, 250.05, 200., 150., 190., 0.]]
     action = agent.act(state, False)
     reward = env.calculate_reward(state, action)
-    print("state = {}, action = {}, reward= {}".format(state, action, reward))
+    print("state = {}, action = {}, reward= {}".format(state, action, reward))    

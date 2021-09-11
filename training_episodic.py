@@ -35,7 +35,7 @@ if __name__ == "__main__":
             # el nuevo estado y la recompensa
             action = agent.act(state, True)
             next_state, reward = env.step(action)
-            
+
             total_reward += reward
             print("episode = {}, step = {}, state = {}, action = {}, reward= {}, next_state = {}, total_reward={:.2f}".format(e+1, t+1, state, action, reward, next_state, total_reward)) 
 
@@ -74,7 +74,7 @@ if __name__ == "__main__":
         plt.ylabel('number of pods')
         plt.xlabel('time')
         plt.yticks(range(1, configuration.MAX_NUM_PODS + 1))
-        plt.plot(buffer_datetime, buffer_number_of_pods)
+        plt.plot(buffer_datetime, buffer_number_of_pods, 'bo-')
         plt.gcf().autofmt_xdate()
         plotfile = "./graphs/drl/performance_train_pods_time_" + str(e) + ".jpg"
         graph.savefig(plotfile)    

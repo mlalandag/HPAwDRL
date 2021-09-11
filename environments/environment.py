@@ -137,7 +137,7 @@ class K8Senvironment():
 
                 v1_pod = self.api_v1.read_namespaced_pod(name=pod['metadata']['name'], namespace="php-apache")                 
                 if v1_pod.status.phase == "Running" and v1_pod.metadata.deletion_timestamp == None:
-                    print("Pod >> {} is Running".format(v1_pod.metadata.name))
+                    #print("Pod >> {} is Running".format(v1_pod.metadata.name))
                     count += 1
                     if count <= configuration.MAX_NUM_PODS and pod['containers']:
                         # print("Pods containers >> {}".format(pod['containers']))
