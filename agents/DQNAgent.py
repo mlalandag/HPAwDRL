@@ -53,12 +53,16 @@ class DQNAgent():
 
     def build_network(self):
 
+        initializer = tf.keras.initializers.Zeros()
+        mse = tf.keras.losses.MeanSquaredError()        
+
         model = Sequential()
-        model.add(Dense(configuration.MAX_NUM_PODS + 1, activation='relu', input_shape=(configuration.MAX_NUM_PODS + 1,), kernel_initializer='glorot_uniform'))
-        model.add(Dense(32, activation='relu', kernel_initializer='glorot_uniform'))        
-        model.add(Dense(16, activation='relu', kernel_initializer='glorot_uniform'))
-        model.add(Dense(self.action_size, kernel_initializer='glorot_uniform'))        
-        model.compile(loss='mse', optimizer=Adam(), metrics=['accuracy'])        
+        model.add(Dense(configuration.MAX_NUM_PODS + 1, activation='relu', input_shape=(configuration.MAX_NUM_PODS + 1,), kernel_initializer=initializer))
+        model.add(Dense(32, activation='relu', kernel_initializer=initializer))        
+        model.add(Dense(16, activation='relu', kernel_initializer=initializer))
+        model.add(Dense(self.action_size, kernel_initializer=initializer))        
+        #model.compile(loss=mse, optimizer=Adam(), metrics=['accuracy'])        
+        model.compile(loss=mse, optimizer=Adam())                
 
         return model
 
@@ -79,21 +83,21 @@ class DQNAgent():
         # Calculamos el Q value basándonos en la Target network
         for state, action, reward, next_state in minibatch:
 
-            print("state = {}, action = {}, reward= {}, next_state = {}".format(state, action, reward, next_state)) 
+            # print("state = {}, action = {}, reward= {}, next_state = {}".format(state, action, reward, next_state)) 
             Q_target_values = self.target_network.predict(next_state)
-            print("Q_values = {}".format(Q_values)) 
+            # print("Q_target_values = {}".format(Q_target_values)) 
             target_Q = (reward + self.gamma * np.amax(Q_target_values))
-            print("target_Q >>> {} = {} + {} * {}".format(target_Q, reward, self.gamma,np.amax(Q_target_values)))                        
+            # print("target_Q >>> {} = {} + {} * {}".format(target_Q, reward, self.gamma,np.amax(Q_target_values)))                        
                 
             # Calculamos el Q value utilizando la Main network 
             Q_values = self.main_network.predict(state)
-            print("Q_values >> " + str(Q_values))
+            # print("Q_values >> " + str(Q_values))
             
             # Actualizamos el valor predicho por la Main con el target_Q 
-            print("Q_values[0][action - 1] >> " + str(Q_values[0][action - 1]))            
-            print("delta                   >> " + str(self.alpha * (target_Q - Q_values[0][action - 1])))                     
+            # print("Q_values[0][action - 1] >> " + str(Q_values[0][action - 1]))            
+            # print("delta                   >> " + str(self.alpha * (target_Q - Q_values[0][action - 1])))               
             Q_values[0][action - 1] += self.alpha * (target_Q - Q_values[0][action - 1])
-            print("Q_values >> " + str(Q_values))            
+            # print("Q_values >> " + str(Q_values))
             
             # Entrenamos la Main network
             self.main_network.fit(state, Q_values, epochs=1, verbose=0)

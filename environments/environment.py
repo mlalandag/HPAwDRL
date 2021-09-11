@@ -19,7 +19,7 @@ class K8Senvironment():
 
         state  = self.get_state()
         self.set_replicas(action)
-        time.sleep(15)                   
+        time.sleep(20)                   
         reward = self.calculate_reward(state, action)
         new_state  = self.get_state()
 
@@ -119,14 +119,14 @@ class K8Senvironment():
     def get_state(self):
 
         resource = self.api.list_namespaced_custom_object(group="metrics.k8s.io",version="v1beta1", namespace="php-apache", plural="pods")
+        v1_response = self.api_v1.list_namespaced_pod(namespace="php-apache")        
         #print("Resource >> {}".format(resource))
-        for pod in resource["items"]:
-            if pod['metadata']['name'].startswith('php-apache'):      
-                print("Resource pod >> {}".format(pod['metadata']['name']))  
-        v1_response = self.api_v1.list_namespaced_pod(namespace="php-apache")
-        for i in v1_response.items:
-            if i.metadata.name.startswith('php-apache'):
-                print("V1 = {} {} {}".format(i.metadata.name,i.status.phase,i.metadata.deletion_timestamp))
+        # for pod in resource["items"]:
+        #     if pod['metadata']['name'].startswith('php-apache'):      
+        #         print("Resource pod >> {}".format(pod['metadata']['name']))  
+        # for i in v1_response.items:
+        #     if i.metadata.name.startswith('php-apache'):
+        #         print("V1 = {} {} {}".format(i.metadata.name,i.status.phase,i.metadata.deletion_timestamp))
 
         count = 0
         cpu = []

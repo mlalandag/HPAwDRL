@@ -9,7 +9,7 @@ NUM_TIMESTEPS               = 1000
 MAX_NUM_PODS                = 5
 MIN_NUM_PODS                = 1
 
-BATCH_SIZE                  = 10
+BATCH_SIZE                  = 100
 
 PATH_MODEL                  = './models/model.' + str(MAX_NUM_PODS) + '.keras'
 
