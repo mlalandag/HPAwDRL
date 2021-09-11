@@ -13,12 +13,13 @@ class K8Senvironment():
     def __init__(self):
         config.load_kube_config()
         self.api = client.CustomObjectsApi()
+        self.api_v1 = client.CoreV1Api()
     
     def step(self, action):
 
         state  = self.get_state()
         self.set_replicas(action)
-        time.sleep(12)                   
+        time.sleep(15)                   
         reward = self.calculate_reward(state, action)
         new_state  = self.get_state()
 
@@ -118,6 +119,14 @@ class K8Senvironment():
     def get_state(self):
 
         resource = self.api.list_namespaced_custom_object(group="metrics.k8s.io",version="v1beta1", namespace="php-apache", plural="pods")
+        #print("Resource >> {}".format(resource))
+        for pod in resource["items"]:
+            if pod['metadata']['name'].startswith('php-apache'):      
+                print("Resource pod >> {}".format(pod['metadata']['name']))  
+        v1_response = self.api_v1.list_namespaced_pod(namespace="php-apache")
+        for i in v1_response.items:
+            if i.metadata.name.startswith('php-apache'):
+                print("V1 = {} {} {}".format(i.metadata.name,i.status.phase,i.metadata.deletion_timestamp))
 
         count = 0
         cpu = []
@@ -125,13 +134,15 @@ class K8Senvironment():
 
         for pod in resource["items"]:
             if pod['metadata']['name'].startswith('php-apache'):
-                # for i in api_response.items:
-                #     print(i.metadata.name + " " + i.status.phase)
-                count += 1
-                if count <= configuration.MAX_NUM_PODS and pod['containers']:
-                    print("Pods >> {}".format(pod['containers']))
-                    cpu.append(round(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['cpu'])) / 1000000, 2))
-                    mem.append(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['memory'])))
+
+                v1_pod = self.api_v1.read_namespaced_pod(name=pod['metadata']['name'], namespace="php-apache")                 
+                if v1_pod.status.phase == "Running" and v1_pod.metadata.deletion_timestamp == None:
+                    print("Pod >> {} is Running".format(v1_pod.metadata.name))
+                    count += 1
+                    if count <= configuration.MAX_NUM_PODS and pod['containers']:
+                        # print("Pods containers >> {}".format(pod['containers']))
+                        cpu.append(round(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['cpu'])) / 1000000, 2))
+                        mem.append(float(re.sub("[^0-9]", "", pod['containers'][0]['usage']['memory'])))
 
         if count > configuration.MAX_NUM_PODS:
             count = configuration.MAX_NUM_PODS

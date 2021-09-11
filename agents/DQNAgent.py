@@ -71,21 +71,29 @@ class DQNAgent():
     # Entrenamiento de la red
     def train(self, batch_size):
         
-        print("Training")
+        print("Training with batch_size = {}".format(configuration.BATCH_SIZE))
 
         # Muestreamos un mini batch de transiciones 
         minibatch = random.sample(self.replay_buffer, batch_size)
         
         # Calculamos el Q value basándonos en la Target network
         for state, action, reward, next_state in minibatch:
-            target_Q = (reward + self.gamma * np.amax(self.target_network.predict(next_state)))
+
+            print("state = {}, action = {}, reward= {}, next_state = {}".format(state, action, reward, next_state)) 
+            Q_target_values = self.target_network.predict(next_state)
+            print("Q_values = {}".format(Q_values)) 
+            target_Q = (reward + self.gamma * np.amax(Q_target_values))
+            print("target_Q >>> {} = {} + {} * {}".format(target_Q, reward, self.gamma,np.amax(Q_target_values)))                        
                 
             # Calculamos el Q value utilizando la Main network 
             Q_values = self.main_network.predict(state)
-            # print("Q_values >> " + str(Q_values))
+            print("Q_values >> " + str(Q_values))
             
             # Actualizamos el valor predicho por la Main con el target_Q 
+            print("Q_values[0][action - 1] >> " + str(Q_values[0][action - 1]))            
+            print("delta                   >> " + str(self.alpha * (target_Q - Q_values[0][action - 1])))                     
             Q_values[0][action - 1] += self.alpha * (target_Q - Q_values[0][action - 1])
+            print("Q_values >> " + str(Q_values))            
             
             # Entrenamos la Main network
             self.main_network.fit(state, Q_values, epochs=1, verbose=0)

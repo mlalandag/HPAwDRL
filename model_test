@@ -1,0 +1,20 @@
+from environments.environment   import K8Senvironment
+from agents.DQNAgent            import DQNAgent
+from configuration              import configuration
+import matplotlib.pyplot        as plt
+import numpy                    as np
+
+if __name__ == "__main__":
+
+    # Creamos el entorno y el agente       
+    env = K8Senvironment()    
+    agent = DQNAgent(configuration.ALPHA, configuration.GAMMA, configuration.MAX_NUM_PODS,
+                           configuration.MIN_EPSILON, configuration.EPSILON, configuration.EPSILON_DECAY)
+    # Cargamos el modelo
+    agent.path = './models/model.5.10000.episodic.keras'
+    agent.load_weights()
+    # Creamos state
+    state = [[4, 250.05, 200., 150., 190., 0.]]
+    action = agent.act(state, False)
+    reward = env.calculate_reward(state, action)
+    print("state = {}, action = {}, reward= {}".format(state, action, reward))
