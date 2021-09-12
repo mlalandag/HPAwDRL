@@ -15,9 +15,8 @@ class K8Senvironment():
         self.api = client.CustomObjectsApi()
         self.api_v1 = client.CoreV1Api()
     
-    def step(self, action):
+    def step(self, state, action):
 
-        state  = self.get_state()
         self.set_replicas(action)
         time.sleep(20)                   
         reward = self.calculate_reward(state, action)

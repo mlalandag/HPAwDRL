@@ -34,7 +34,7 @@ if __name__ == "__main__":
             # El agente decide la siguiente accion y recoge 
             # el nuevo estado y la recompensa
             action = agent.act(state, True)
-            next_state, reward = env.step(action)
+            next_state, reward = env.step(state, action)
 
             total_reward += reward
             print("episode = {}, step = {}, state = {}, action = {}, reward= {}, next_state = {}, total_reward={:.2f}".format(e+1, t+1, state, action, reward, next_state, total_reward)) 

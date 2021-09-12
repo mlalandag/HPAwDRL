@@ -40,9 +40,10 @@ class DQNAgent():
 
         if train:
             self.epsilon = max(self.min_epsilon, self.epsilon * self.epsilon_decay)
-            print("Random with Epsilon = {}".format(self.epsilon))
+            print("Epsilon = {}".format(self.epsilon))
 
             if random.uniform(0,1) < self.epsilon:
+                print("Random action")
                 return np.random.randint(self.action_size) + 1
         
         Q_values = self.main_network.predict(state)
