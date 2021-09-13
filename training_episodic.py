@@ -17,7 +17,6 @@ if __name__ == "__main__":
                            configuration.MIN_EPSILON, configuration.EPSILON, configuration.EPSILON_DECAY)
     total_reward = 0
     state = env.get_state()
-    agent.epsilon = 0.99
     agent.path = './models/model.' + str(configuration.MAX_NUM_PODS) + '.episodic.keras' 
     
     for e in range(configuration.NUM_EPISODES):        
@@ -26,6 +25,7 @@ if __name__ == "__main__":
         buffer_number_of_pods  = []
         buffer_total_cpu_usage = [] 
         buffer_datetime = [] 
+        agent.epsilon = 1
 
         for t in range(configuration.NUM_TIMESTEPS):
             # Actualizamos la target network con la frecuencia deseada

@@ -4,12 +4,12 @@ from tensorflow.python.compat.compat import _update_forward_compatibility_date_n
 
 
 NUM_EPISODES                = 20
-NUM_TIMESTEPS               = 250
+NUM_TIMESTEPS               = 300
 
 MAX_NUM_PODS                = 5
 MIN_NUM_PODS                = 1
 
-BATCH_SIZE                  = 50
+BATCH_SIZE                  = 25
 
 PATH_MODEL                  = './models/model.' + str(MAX_NUM_PODS) + '.keras'
 
