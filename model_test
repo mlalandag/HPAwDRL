@@ -11,10 +11,26 @@ if __name__ == "__main__":
     agent = DQNAgent(configuration.ALPHA, configuration.GAMMA, configuration.MAX_NUM_PODS,
                            configuration.MIN_EPSILON, configuration.EPSILON, configuration.EPSILON_DECAY)
     # Cargamos el modelo
-    agent.path = './models/model.5.10000.episodic.keras'
+    agent.path = 'models\model.5.episodic.keras'
     agent.load_weights()
     # Creamos state
-    state = [[4, 250.05, 200., 150., 190., 0.]]
+    state = [[1, 200.0, 0.0, 0.0, 0.0, 0.0]]
+    action = agent.act(state, False)
+    reward = env.calculate_reward(state, action)
+    print("state = {}, action = {}, reward= {}".format(state, action, reward)) 
+    state = [[3, 128.31, 113.46, 104.34, 0.0, 0.0]]   
+    action = agent.act(state, False)
+    reward = env.calculate_reward(state, action)
+    print("state = {}, action = {}, reward= {}".format(state, action, reward)) 
+    state = [[2, 150.31, 250.46, 0.0, 0.0, 0.0]]   
+    action = agent.act(state, False)
+    reward = env.calculate_reward(state, action)
+    print("state = {}, action = {}, reward= {}".format(state, action, reward))   
+    state = [[3, 28.31, 18.46, 30.0, 0.0, 0.0]]   
+    action = agent.act(state, False)
+    reward = env.calculate_reward(state, action)
+    print("state = {}, action = {}, reward= {}".format(state, action, reward))   
+    state = [[4, 310.31, 410.46, 460.0, 500.0, 0.0]]   
     action = agent.act(state, False)
     reward = env.calculate_reward(state, action)
     print("state = {}, action = {}, reward= {}".format(state, action, reward))    

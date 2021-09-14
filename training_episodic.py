@@ -25,7 +25,7 @@ if __name__ == "__main__":
         buffer_number_of_pods  = []
         buffer_total_cpu_usage = [] 
         buffer_datetime = [] 
-        agent.epsilon = 1
+        agent.epsilon = 0.99
 
         for t in range(configuration.NUM_TIMESTEPS):
             # Actualizamos la target network con la frecuencia deseada
@@ -74,7 +74,7 @@ if __name__ == "__main__":
         plt.ylabel('number of pods')
         plt.xlabel('time')
         plt.yticks(range(1, configuration.MAX_NUM_PODS + 1))
-        plt.plot(buffer_datetime, buffer_number_of_pods, 'bo-')
+        plt.plot(buffer_datetime, buffer_number_of_pods)
         plt.gcf().autofmt_xdate()
         plotfile = "./graphs/drl/performance_train_pods_time_" + str(e) + ".jpg"
         graph.savefig(plotfile)    
