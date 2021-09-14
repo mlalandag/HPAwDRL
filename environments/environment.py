@@ -42,21 +42,21 @@ class K8Senvironment():
             ordered_state.append(cpu_usage)
         print("Ordered_state = {}".format(ordered_state))
 
-        for i in range(number_of_pods):
-            if ordered_state[i+1] > 300:
-                pods_high_cpu += 1    
-            elif ordered_state[i+1] < 100:
-                pods_low_cpu += 1
-            else:
-                pods_medium_cpu += 1
-
-        # for cpu_usage in state[0][1:configuration.MAX_NUM_PODS + 1]:
-        #     if cpu_usage == 3:
+        # for i in range(number_of_pods):
+        #     if ordered_state[i+1] > 300:
         #         pods_high_cpu += 1    
-        #     elif cpu_usage == 1:
+        #     elif ordered_state[i+1] < 100:
         #         pods_low_cpu += 1
-        #     elif cpu_usage == 2:
+        #     else:
         #         pods_medium_cpu += 1
+
+        for cpu_usage in state[0][1:configuration.MAX_NUM_PODS + 1]:
+            if cpu_usage == 3:
+                pods_high_cpu += 1    
+            elif cpu_usage == 1:
+                pods_low_cpu += 1
+            elif cpu_usage == 2:
+                pods_medium_cpu += 1
 
         #print("State = {}".format(state))
         #print("pods_low_cpu = {}, pods_medium_cpu = {}, pods_high_cpu = {}, action={}".format(pods_low_cpu, pods_medium_cpu, pods_high_cpu, action))
@@ -150,23 +150,23 @@ class K8Senvironment():
         mem += [0] * (configuration.MAX_NUM_PODS - len(mem))
 
         state = np.reshape(np.asarray([count] + cpu), (1, configuration.MAX_NUM_PODS + 1)) 
-        #print("State = {}".format(state))
+        print("State = {}".format(state))
 
-        # discretized_state = [count]
-        # for cpu_usage in state[0][1:configuration.MAX_NUM_PODS + 1]:
-        #     if cpu_usage > 300:
-        #         discretized_state.append(3)    
-        #     elif cpu_usage < 100 and cpu_usage > 0:
-        #         discretized_state.append(1)
-        #     elif cpu_usage == 0.0:
-        #         discretized_state.append(0)
-        #     else:
-        #         discretized_state.append(2)
+        discretized_state = [count]
+        for cpu_usage in state[0][1:configuration.MAX_NUM_PODS + 1]:
+            if cpu_usage > 300:
+                discretized_state.append(3)    
+            elif cpu_usage < 100 and cpu_usage > 0:
+                discretized_state.append(1)
+            elif cpu_usage == 0.0:
+                discretized_state.append(0)
+            else:
+                discretized_state.append(2)
 
-        # print("Discretized state = {}".format(discretized_state))
-        # discretized_state = np.reshape(discretized_state, (1, configuration.MAX_NUM_PODS + 1))
-        # return discretized_state
-        return state
+        print("Discretized state = {}".format(discretized_state))
+        discretized_state = np.reshape(discretized_state, (1, configuration.MAX_NUM_PODS + 1))
+        return discretized_state
+        #return state
 
     def set_replicas(self, num_replicas):
         print('Setting number of Replicas to: {}'.format(str(num_replicas)))
