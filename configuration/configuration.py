@@ -16,7 +16,7 @@ PATH_MODEL                  = './models/model.' + str(MAX_NUM_PODS) + '.keras'
 UPDATE_RATE                 = 10
 SAVE_RATE                   = 50      
 
-ALPHA                       = 0.1
+ALPHA                       = 1
 GAMMA                       = 0.99
 
 MIN_EPSILON                 = 0.05   

@@ -49,8 +49,9 @@ if __name__ == "__main__":
             if len(agent.replay_buffer) > batch_size:
                 agent.train(batch_size)
 
-            number_of_pods = int(state[0][0])
-            cpu_usage = state[0][1:configuration.MAX_NUM_PODS + 1]
+            #number_of_pods = int(state[0][0])
+            number_of_pods = sum(1 for i in state[0] if i != 0)
+            cpu_usage = state[0][0:configuration.MAX_NUM_PODS]
             total_cpu_usage = np.sum(cpu_usage)
             buffer_number_of_pods.append(number_of_pods)
             buffer_total_cpu_usage.append(total_cpu_usage)
@@ -64,7 +65,7 @@ if __name__ == "__main__":
         graph = plt.figure()
         plt.ylabel('number of pods')
         plt.xlabel('cpu usage')
-        plt.yticks(range(1, configuration.MAX_NUM_PODS + 1))
+        plt.yticks(range(1, configuration.MAX_NUM_PODS))
         plt.plot(buffer_total_cpu_usage, buffer_number_of_pods, 'o', color='black')
         plotfile = "./graphs/drl/performance_train_" + str(e) + ".jpg"
         graph.savefig(plotfile)  
@@ -73,7 +74,7 @@ if __name__ == "__main__":
         graph = plt.figure()
         plt.ylabel('number of pods')
         plt.xlabel('time')
-        plt.yticks(range(1, configuration.MAX_NUM_PODS + 1))
+        plt.yticks(range(1, configuration.MAX_NUM_PODS))
         plt.plot(buffer_datetime, buffer_number_of_pods)
         plt.gcf().autofmt_xdate()
         plotfile = "./graphs/drl/performance_train_pods_time_" + str(e) + ".jpg"
@@ -83,7 +84,7 @@ if __name__ == "__main__":
         graph = plt.figure()
         plt.ylabel('cpu')
         plt.xlabel('time')
-        plt.yticks(range(1, configuration.MAX_NUM_PODS + 1))
+        plt.yticks(range(1, configuration.MAX_NUM_PODS))
         plt.plot(buffer_datetime, buffer_total_cpu_usage)
         plt.gcf().autofmt_xdate()
         plotfile = "./graphs/drl/performance_train_cpu_time_" + str(e) + ".jpg"

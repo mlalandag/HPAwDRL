@@ -54,14 +54,16 @@ class DQNAgent():
 
     def build_network(self):
 
-        initializer = tf.keras.initializers.Zeros()
+        #initializer = tf.keras.initializers.Zeros()
+        initializer = tf.keras.initializers.RandomNormal(mean=0., stddev=1.)
         mse = tf.keras.losses.MeanSquaredError()        
 
         model = Sequential()
-        model.add(Dense(configuration.MAX_NUM_PODS + 1, activation='relu', input_shape=(configuration.MAX_NUM_PODS + 1,), kernel_initializer=initializer))
-        model.add(Dense(32, activation='relu', kernel_initializer=initializer))        
-        model.add(Dense(16, activation='relu', kernel_initializer=initializer))
-        model.add(Dense(self.action_size, kernel_initializer=initializer))        
+        model.add(Dense(configuration.MAX_NUM_PODS, activation='relu', input_shape=(configuration.MAX_NUM_PODS,), kernel_initializer='RandomNormal'))
+        model.add(Dense(32, activation='relu', kernel_initializer=initializer))     
+        model.add(Dense(64, activation='relu', kernel_initializer=initializer))      
+        model.add(Dense(32, activation='relu', kernel_initializer=initializer))
+        model.add(Dense(self.action_size, activation='linear', kernel_initializer=initializer))        
         #model.compile(loss=mse, optimizer=Adam(), metrics=['accuracy'])        
         model.compile(loss=mse, optimizer=Adam())                
 
