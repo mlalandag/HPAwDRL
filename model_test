@@ -14,23 +14,23 @@ if __name__ == "__main__":
     agent.path = 'models\model.5.episodic.keras'
     agent.load_weights()
     # Creamos state
-    state = [[1, 200.0, 0.0, 0.0, 0.0, 0.0]]
+    state = [[0, 2, 0, 0, 1]]
     action = agent.act(state, False)
     reward = env.calculate_reward(state, action)
     print("state = {}, action = {}, reward= {}".format(state, action, reward)) 
-    state = [[3, 128.31, 113.46, 104.34, 0.0, 0.0]]   
-    action = agent.act(state, False)
-    reward = env.calculate_reward(state, action)
-    print("state = {}, action = {}, reward= {}".format(state, action, reward)) 
-    state = [[2, 150.31, 250.46, 0.0, 0.0, 0.0]]   
-    action = agent.act(state, False)
-    reward = env.calculate_reward(state, action)
-    print("state = {}, action = {}, reward= {}".format(state, action, reward))   
-    state = [[3, 28.31, 18.46, 30.0, 0.0, 0.0]]   
-    action = agent.act(state, False)
-    reward = env.calculate_reward(state, action)
-    print("state = {}, action = {}, reward= {}".format(state, action, reward))   
-    state = [[4, 310.31, 410.46, 460.0, 500.0, 0.0]]   
-    action = agent.act(state, False)
-    reward = env.calculate_reward(state, action)
-    print("state = {}, action = {}, reward= {}".format(state, action, reward))    
+    # state = [[2, 2, 0, 2, 0]]   
+    # action = agent.act(state, False)
+    # reward = env.calculate_reward(state, action)
+    # print("state = {}, action = {}, reward= {}".format(state, action, reward)) 
+    # state = [[3, 3, 0.0, 0.0, 0.0]]   
+    # action = agent.act(state, False)
+    # reward = env.calculate_reward(state, action)
+    # print("state = {}, action = {}, reward= {}".format(state, action, reward))   
+    # state = [[1, 1, 0, 0., 1]]   
+    # action = agent.act(state, False)
+    # reward = env.calculate_reward(state, action)
+    # print("state = {}, action = {}, reward= {}".format(state, action, reward))   
+    # state = [[3, 3, 3, 3, 0.0]]   
+    # action = agent.act(state, False)
+    # reward = env.calculate_reward(state, action)
+    # print("state = {}, action = {}, reward= {}".format(state, action, reward))    
