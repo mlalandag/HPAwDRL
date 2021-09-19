@@ -1,7 +1,9 @@
 from environments.environment   import K8Senvironment
 from configuration              import configuration
 import matplotlib.pyplot        as plt
+import numpy                    as np
 import datetime
+import time
 
 if __name__ == "__main__":
 
@@ -26,6 +28,7 @@ if __name__ == "__main__":
         buffer_number_of_pods.append(number_of_pods)
         buffer_total_cpu_usage.append(total_cpu_usage)     
         buffer_datetime.append(datetime.datetime.now())
+        print("state = {}, number_of_pods={:.2f}".format(state, number_of_pods)) 
 
         if count % 4 == 0:
             print("Plotting pods vs cpu")
@@ -42,7 +45,7 @@ if __name__ == "__main__":
             plt.ylabel('number of pods')
             plt.xlabel('time')
             plt.yticks(range(1, configuration.MAX_NUM_PODS))
-            plt.plot(buffer_datetime, buffer_number_of_pods, 'bo-')
+            plt.plot(buffer_datetime, buffer_number_of_pods)
             plt.gcf().autofmt_xdate()
             plotfile = "./graphs/hpa/main_performance_hpa_pods_time.jpg"
             graph.savefig(plotfile)    
