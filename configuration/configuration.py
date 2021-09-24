@@ -3,8 +3,8 @@ from numpy.core.einsumfunc import _compute_size_by_dict
 from tensorflow.python.compat.compat import _update_forward_compatibility_date_number
 
 
-NUM_EPISODES                = 20
-NUM_TIMESTEPS               = 150
+NUM_EPISODES                = 50
+NUM_TIMESTEPS               = 100
 
 MAX_NUM_PODS                = 5
 MIN_NUM_PODS                = 1
@@ -13,7 +13,7 @@ BATCH_SIZE                  = 10
 
 PATH_MODEL                  = './models/model.' + str(MAX_NUM_PODS) + '.keras'
 
-UPDATE_RATE                 = 10
+UPDATE_RATE                 = 15
 SAVE_RATE                   = 25      
 
 ALPHA                       = 1
