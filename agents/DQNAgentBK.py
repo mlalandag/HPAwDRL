@@ -8,7 +8,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.initializers import Zeros
 from configuration import configuration
 
-class DQNAgent():
+class DQNAgentBK():
     
     def __init__(self, alpha, gamma, action_size, min_epsilon, epsilon, epsilon_decay):
 
@@ -59,9 +59,11 @@ class DQNAgent():
         mse = tf.keras.losses.MeanSquaredError()        
 
         model = Sequential()
-        model.add(Dense(configuration.MAX_NUM_PODS, activation='relu', input_shape=(configuration.MAX_NUM_PODS,), kernel_initializer='RandomNormal'))
+        model.add(Dense(configuration.MAX_NUM_PODS, activation='relu', input_shape=(configuration.MAX_NUM_PODS,), kernel_initializer=initializer))
         model.add(Dense(32, activation='relu', kernel_initializer=initializer))     
-        model.add(Dense(64, activation='relu', kernel_initializer=initializer))      
+        model.add(Dense(64, activation='relu', kernel_initializer=initializer))    
+        model.add(Dense(128, activation='relu', kernel_initializer=initializer))   
+        model.add(Dense(64, activation='relu', kernel_initializer=initializer)) 
         model.add(Dense(32, activation='relu', kernel_initializer=initializer))
         model.add(Dense(self.action_size, activation='linear', kernel_initializer=initializer))        
         #model.compile(loss=mse, optimizer=Adam(), metrics=['accuracy'])        

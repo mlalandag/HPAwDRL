@@ -59,7 +59,7 @@ class DQNAgent():
         mse = tf.keras.losses.MeanSquaredError()        
 
         model = Sequential()
-        model.add(Dense(configuration.MAX_NUM_PODS, activation='relu', input_shape=(configuration.MAX_NUM_PODS,), kernel_initializer=initializer))
+        model.add(Dense(configuration.MAX_NUM_PODS, activation='relu', input_shape=(configuration.MAX_NUM_PODS,)))
         model.add(Dense(32, activation='relu', kernel_initializer=initializer))     
         model.add(Dense(64, activation='relu', kernel_initializer=initializer))      
         model.add(Dense(32, activation='relu', kernel_initializer=initializer))

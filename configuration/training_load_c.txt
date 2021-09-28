@@ -1,0 +1,7 @@
+kubectl exec load-generator1 -n php-apache -- /bin/sh -c "while : ; do if [ $(echo "scale=2;$(date +"%M")/10" | bc ) > 5 ]; then sleep 0.01; fi; if [ $(echo "scale=2;$(date +"%M")/10" | bc ) > 4 ]; then sleep 0.1; fi; if [ $(echo "scale=2;$(date +"%M")/10" | bc ) > 3 ]; then sleep 60; fi; if [ $(echo "scale=2;$(date +"%M")/10" | bc ) > 2 ]; then sleep 0.01; fi; if [ $(echo "scale=2;$(date +"%M")/10" | bc ) > 1 ]; then sleep 0.1; fi; if [ $(echo "scale=2;$(date +"%M")/10" | bc ) > 0 ]; then sleep 60; fi; wget -q -O- http://php-apache; done"
+
+
+while : ; do if [ "$(echo "$(date +"%M")/10" | bc )" -eq 5 ]; then echo "0.01"; sleep 0.01; fi; wget -q -O- http://php-apache; done
+
+
+while : ; do if [ "$(echo "$(date +"%M")/10" | bc )" -eq 5 ]; then sleep 0.01; elif [ "$(echo "$(date +"%M")/10" | bc )" -eq 4 ]; then sleep 0.1; elif [ "$(echo "$(date +"%M")/10" | bc )" -eq 3 ]; then sleep 60; elif [ "$(echo "$(date +"%M")/10" | bc )" -eq 2 ]; then sleep 0.01; elif [ "$(echo "$(date +"%M")/10" | bc )" -eq 1 ]; then sleep 0.1; elif [ "$(echo "$(date +"%M")/10" | bc )" -eq 0 ]; then sleep 60; fi; wget -q -O- http://php-apache; done

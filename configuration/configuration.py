@@ -13,7 +13,7 @@ BATCH_SIZE                  = 10
 
 PATH_MODEL                  = './models/model.' + str(MAX_NUM_PODS) + '.keras'
 
-UPDATE_RATE                 = 15
+UPDATE_RATE                 = 10
 SAVE_RATE                   = 25      
 
 ALPHA                       = 1
