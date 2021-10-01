@@ -14,6 +14,26 @@ if __name__ == "__main__":
     agent.path = 'models\model.5.episodic.keras'
     agent.load_weights()
     # Creamos state
+    state = [[2, 2, 2, 2, 2]]
+    action = agent.act(state, False)
+    reward = env.calculate_reward(state, action)
+    print("state = {}, action = {}, reward= {}".format(state, action, reward)) 
+    state = [[1, 1, 1, 1, 1]]   
+    action = agent.act(state, False)
+    reward = env.calculate_reward(state, action)
+    print("state = {}, action = {}, reward= {}".format(state, action, reward)) 
+    state = [[0, 0, 1, 0, 0]]   
+    action = agent.act(state, False)
+    reward = env.calculate_reward(state, action)
+    print("state = {}, action = {}, reward= {}".format(state, action, reward))   
+    state = [[0, 0, 0, 0, 3]]   
+    action = agent.act(state, False)
+    reward = env.calculate_reward(state, action)
+    print("state = {}, action = {}, reward= {}".format(state, action, reward))   
+    state = [[3, 3, 3, 3, 3]]   
+    action = agent.act(state, False)
+    reward = env.calculate_reward(state, action)
+    print("state = {}, action = {}, reward= {}".format(state, action, reward))  
     state = [[0, 2, 2, 2, 3]]
     action = agent.act(state, False)
     reward = env.calculate_reward(state, action)
